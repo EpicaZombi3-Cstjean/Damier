@@ -3,11 +3,13 @@ package cstjean.mobile.damier;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -30,7 +32,7 @@ public class DamierFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.activity_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         placerCasesDamier(view);
 
@@ -55,7 +57,7 @@ public class DamierFragment extends Fragment {
 
             tableLayout.addView(row);
 
-            for (int i = 1; i < 50; i++) {
+            for (int i = 1; i <= 10; i++) {
 
                 final int finalI = i;
                 final ImageButton bouton = new ImageButton(getActivity());
