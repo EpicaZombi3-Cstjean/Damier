@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'cstjean.mobile.damier'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "cstjean.mobile.damier"
