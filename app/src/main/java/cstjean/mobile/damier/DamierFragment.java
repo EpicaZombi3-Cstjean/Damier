@@ -1,6 +1,7 @@
 package cstjean.mobile.damier;
 
 import android.content.res.Configuration;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -10,10 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+
+import cstjean.mobile.damier.logique.Damier;
 
 public class DamierFragment extends Fragment {
 
@@ -53,24 +58,23 @@ public class DamierFragment extends Fragment {
 
             int buttonSize;
 
+
             if (getResources().getConfiguration().orientation ==
                     Configuration.ORIENTATION_LANDSCAPE) {
-                buttonSize = 50;
-            } else {
                 buttonSize = 75;
+            } else {
+                buttonSize = 100;
             }
+
+
 
             // LayoutParams pour le positionnement par rapport au layout
             TableRow.LayoutParams params = new TableRow.LayoutParams();
             params.height = buttonSize;
             params.width = buttonSize;
-
             params.setMargins(0, 0, 0, 0);
 
             bouton.setLayoutParams(params);
-
-            //TableRow row = getRowWithButtonIndex(i, view);
-
             bouton.setOnClickListener(v -> buttonPress(finalI)); // Note : je ne connais pas les lambdas.
 
             int btn_id = View.generateViewId();
@@ -79,12 +83,25 @@ public class DamierFragment extends Fragment {
 
             bouton.setImageResource(R.drawable.ic_placeholder_android_icon);
 
-            gridLayout.addView(bouton);
+            final ImageView CaseBlanche = new ImageView(getActivity());
+
+            CaseBlanche.setLayoutParams(params);
+
+
+            if (Damier.getRow(i) % 2 == 0) {
+
+                gridLayout.addView(bouton);
+                gridLayout.addView(CaseBlanche);
+
+            } else {
+
+                gridLayout.addView(CaseBlanche);
+                gridLayout.addView(bouton);
+
+            }
+
         }
-
     }
-
-
 
     private void buttonPress(int index) {
         Log.d("oui", "oui");
