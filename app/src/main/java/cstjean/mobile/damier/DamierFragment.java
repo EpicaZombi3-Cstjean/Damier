@@ -55,7 +55,7 @@ public class DamierFragment extends Fragment {
             damier.initialiser();
         }
 
-        updateInterface(view);
+//        updateInterface(view);
 
         return view;
     }
@@ -80,7 +80,7 @@ public class DamierFragment extends Fragment {
             }
 
             // LayoutParams pour le positionnement par rapport au layout
-            TableLayout.LayoutParams params = new TableLayout.LayoutParams();
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.height = buttonSize;
             params.width = buttonSize;
             params.setMargins(0, 0, 0, 0);
@@ -91,7 +91,7 @@ public class DamierFragment extends Fragment {
 
             bouton.setScaleType(ImageView.ScaleType.FIT_XY);
             bouton.setAdjustViewBounds(false);
-            bouton.setPadding(1, 1, 1, 1);
+            bouton.setPadding(5, 5, 5, 5);
 
             // Ajout de l'ID pour le bouton.
             int btn_id = View.generateViewId();
@@ -107,15 +107,12 @@ public class DamierFragment extends Fragment {
             paramsImagePion.width = ViewGroup.LayoutParams.MATCH_PARENT;
             paramsImagePion.height = ViewGroup.LayoutParams.MATCH_PARENT;
 
-
             // Image servant à placer la case blanche située dans la paire (car une position = 2 cases).
 
-            final ImageView caseBlanche = new ImageView(getActivity());
+            final ImageButton caseBlanche = new ImageButton(getActivity());
 
             caseBlanche.setLayoutParams(params);
             caseBlanche.setImageResource(R.mipmap.ic_case_light_grey);
-
-
 
             if (Damier.getRow(i) % 2 == 0) {
 
