@@ -38,9 +38,6 @@ public class Damier {
      * Le constructeur du damier.
      */
     public Damier() {
-        for (int i = 1; i <= 50; i++) {
-            ajouterPion(i, null);
-        }
         this.etatPartie = EtatPartie.EnCours;
     }
 
