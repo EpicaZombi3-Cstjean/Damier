@@ -13,7 +13,6 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TableLayout;
-import android.widget.TableRow;
 
 import cstjean.mobile.damier.logique.Damier;
 import cstjean.mobile.damier.logique.Pion;
@@ -25,17 +24,12 @@ public class DamierFragment extends Fragment {
      */
     public Damier damier = new Damier();
 
-    private boolean partieCommencee = false;
-
     /**
      * Le ID des boutons, nous permettant de continuer à les utiliser.
      */
     int[] buttonIDs = new int[50];
 
-    /**
-     * Les images situées DANS les cases noires, s'il y a un pion dessus
-     */
-    int[] imageIDs = new int[50];
+    private InterfaceState interfaceState = InterfaceState.ShowOnly;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,12 +44,7 @@ public class DamierFragment extends Fragment {
 
         placerCasesDamier(view);
 
-        if (!partieCommencee) {
-            partieCommencee = true;
-            damier.initialiser();
-        }
-
-//        updateInterface(view);
+        updateInterface(view,0);
 
         return view;
     }
@@ -80,7 +69,7 @@ public class DamierFragment extends Fragment {
             }
 
             // LayoutParams pour le positionnement par rapport au layout
-            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            TableLayout.LayoutParams params = new TableLayout.LayoutParams();
             params.height = buttonSize;
             params.width = buttonSize;
             params.setMargins(0, 0, 0, 0);
@@ -90,26 +79,17 @@ public class DamierFragment extends Fragment {
             bouton.setOnClickListener(v -> buttonPress(finalI)); // Note : je ne connais pas les lambdas.
 
             bouton.setScaleType(ImageView.ScaleType.FIT_XY);
-            bouton.setAdjustViewBounds(false);
             bouton.setPadding(5, 5, 5, 5);
 
             // Ajout de l'ID pour le bouton.
             int btn_id = View.generateViewId();
             buttonIDs[i - 1] = btn_id;
             bouton.setId(btn_id);
-            bouton.setImageResource(R.mipmap.ic_case_dark_grey);
-
-            // Image placée DANS le bouton, qui permet à l'utilisateur de voir les pions.
-
-            final ImageView imagePionCase = new ImageView(getActivity());
-
-            GridLayout.LayoutParams paramsImagePion = new GridLayout.LayoutParams();
-            paramsImagePion.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            paramsImagePion.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            bouton.setBackgroundResource(R.mipmap.ic_case_dark_grey);
 
             // Image servant à placer la case blanche située dans la paire (car une position = 2 cases).
 
-            final ImageButton caseBlanche = new ImageButton(getActivity());
+            final ImageView caseBlanche = new ImageView(getActivity());
 
             caseBlanche.setLayoutParams(params);
             caseBlanche.setImageResource(R.mipmap.ic_case_light_grey);
@@ -126,6 +106,7 @@ public class DamierFragment extends Fragment {
 
             }
 
+
         }
     }
 
@@ -133,23 +114,23 @@ public class DamierFragment extends Fragment {
         Log.d("oui", "oui");
     }
 
-    public void updateInterface(View view) {
+    public void updateInterface(View view, int focusPos) {
 
         for(int i = 1; i <= buttonIDs.length; i++) {
 
-            if (damier.findPion(i) != null) {
+            ImageButton btn = view.findViewById(buttonIDs[i - 1]);
 
-                ImageButton btn = view.findViewById(buttonIDs[i - 1]);
+            if (damier.findPion(i) != null) {
 
                 if (damier.findPion(i).getCouleur() == Pion.Couleur.Blanc) {
 
                     if (damier.findPion(i).estDame()) {
 
-                        btn.setImageResource(R.drawable.ic_baseline_add_circle_outline_grey);
+                        btn.setImageResource(R.drawable.ic_baseline_add_circle_outline_light_grey);
 
                     } else {
 
-                        btn.setImageResource(R.drawable.ic_baseline_radio_button_unchecked_24_grey);
+                        btn.setImageResource(R.drawable.ic_baseline_radio_button_unchecked_light_grey);
 
                     }
 
@@ -157,16 +138,43 @@ public class DamierFragment extends Fragment {
 
                     if (damier.findPion(i).estDame()) {
 
-                        btn.setImageResource(R.drawable.ic_baseline_add_circle_outline_black);
+                        btn.setImageResource(R.drawable.ic_baseline_add_circle_outline_grey);
 
                     } else {
 
-                        btn.setImageResource(R.drawable.ic_baseline_radio_button_unchecked_black);
+                        btn.setImageResource(R.drawable.ic_baseline_radio_button_unchecked_grey);
 
                     }
 
                 }
+            } else {
+
+                btn.setImageResource(R.drawable.ic_invisible_icon);
+
             }
         }
+
+        if (focusPos != 0) {
+            modifierCouleurCases(focusPos);
+        }
+    }
+
+    /**
+     * Modifie la couleur des cases si elles font partie des options possibles
+     * et modifie la couleur de la case focusée.
+     */
+    private void modifierCouleurCases(int position) {
+
+        damier.getDeplacementsPossibles(position);
+
+
+
+    }
+
+    /**
+     *
+     */
+    private enum InterfaceState {
+        ShowOnly, Selected, GameOver
     }
 }

@@ -39,6 +39,7 @@ public class Damier {
      */
     public Damier() {
         this.etatPartie = EtatPartie.EnCours;
+        initialiser();
     }
 
     /**
@@ -165,9 +166,7 @@ public class Damier {
         for (int i = 1; i <= 20; i++) {
             ajouterPion(i, new Pion(Pion.Couleur.Blanc));
         }
-        for (int i = 21; i <= 30; i++) {
-            ajouterPion(i, null);
-        }
+
         for (int i = 31; i <= 50; i++) {
             ajouterPion(i, new Pion(Pion.Couleur.Noir));
         }
