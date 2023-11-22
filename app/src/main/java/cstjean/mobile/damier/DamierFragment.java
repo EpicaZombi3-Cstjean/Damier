@@ -29,8 +29,8 @@ public class DamierFragment extends Fragment {
      */
     public Damier damier = new Damier();
 
-
-    TextView text_lastMove;
+    TextView textTourJoueur;
+    TextView textLastMove;
 
     Button btn_back_reset;
 
@@ -55,7 +55,9 @@ public class DamierFragment extends Fragment {
 
         placerCasesDamier(view);
 
-        text_lastMove = view.findViewById(R.id.text_lastMove);
+        textTourJoueur = view.findViewById(R.id.txt_tour_joueur);
+
+        textLastMove = view.findViewById(R.id.text_lastMove);
 
         btn_back_reset = view.findViewById(R.id.btn_back_reset);
         btn_back_reset.setOnClickListener(v -> {
@@ -119,12 +121,12 @@ public class DamierFragment extends Fragment {
 
                 gridLayout.addView(bouton);
                 gridLayout.addView(caseBlanche);
-
+                bouton.setContentDescription("Position " + finalI + ", Case Blanche");
             } else {
 
                 gridLayout.addView(caseBlanche);
                 gridLayout.addView(bouton);
-
+                bouton.setContentDescription("Position " + finalI + ", Case Noire");
             }
 
 
@@ -256,7 +258,16 @@ public class DamierFragment extends Fragment {
             modifierCouleurCases(selectedSlot, view);
         }
 
-        text_lastMove.setText(ElementHistorique.getHistoriqueTour(damier));
+        textLastMove.setText(ElementHistorique.getHistoriqueTour(damier));
+
+        if (damier.getEtatPartie() == Damier.EtatPartie.EnCours) {
+
+            textTourJoueur.setText("Joueur actuel: " + damier.getTourJoueur().toString());
+
+        } else {
+
+            textTourJoueur.setText(damier.getEtatPartie().toString());
+        }
     }
 
     /**

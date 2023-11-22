@@ -193,7 +193,7 @@ public class Damier {
      * @return un array de tous les déplcements possibles.
      */
     public Integer[] getDeplacementsPossibles(int position, boolean doitEtrePrise) {
-
+        // section validation et
         if (!(position >= 1 && position <= 50)) {
             throw new IllegalArgumentException();
         }
@@ -214,6 +214,12 @@ public class Damier {
         // regarder les prises
         // modifie une liste grâce à la référence des valeurs passés en objets.
         regarderPrises(listeDePrises, new Integer[0], position, pionJoueur, dernieresPrises);
+
+        boolean aAutresPionsPlusDePrises = aAutrePionPlusDePrises(pionJoueur, listeDePrises);
+
+        if (aAutresPionsPlusDePrises) {
+            return deplacementsPossibles;
+        }
 
 
         if (!listeDePrises.isEmpty()) {
@@ -241,9 +247,8 @@ public class Damier {
                 }
             }
 
-            aAutrePionPlusDePrises(position, pionJoueur, listeDePrises);
-
             deplacementsPossibles = chosenMoves.toArray(new Integer[0]); // unsure si ça marche
+
 
         } else {
             if (!doitEtrePrise) {
@@ -317,7 +322,7 @@ public class Damier {
     }
 
 
-    private boolean aAutrePionPlusDePrises(int position, Pion pionJoueur,
+    private boolean aAutrePionPlusDePrises(Pion pionJoueur,
                                            ArrayList<Integer[]> listeDePrises) {
         /* Force la plus grande prise */
         HashMap<Integer, Pion> pionsCouleur = getPions(pionJoueur.getCouleur());
@@ -327,17 +332,18 @@ public class Damier {
             int key = entry.getKey(); // position
             Pion pion = entry.getValue(); // pion
 
-            ArrayList<Integer[]> prisesIntermediaire = new ArrayList<>();
-            regarderPrises(prisesIntermediaire, new Integer[0], key, pionJoueur, new Integer[0]);
-
-            // si un autre pion peut faire une prise
             if (pion != pionJoueur) {
+                ArrayList<Integer[]> prisesIntermediaire = new ArrayList<>();
+                regarderPrises(prisesIntermediaire, new Integer[0], key, pion, new Integer[0]);
+
+                // si un autre pion peut faire une meilleure prise
                 if (prisesIntermediaire.size() > listeDePrises.size()) {
-                    return false;
+                    return true;
                 }
             }
+
         }
-        return true;
+        return false;
     }
 
     /**
@@ -607,9 +613,10 @@ public class Damier {
         Pion.Couleur tour = getTourJoueur();
 
         // vérifie si le joueur peut jouer.
-        if (tour != pionJoueur.getCouleur()) {
+        if (tour != pionJoueur.getCouleur() || getEtatPartie() != EtatPartie.EnCours) {
             return; // joueur ne peut pas jouer.
         }
+
 
         Integer[] deplacementsPossibles;
 
@@ -695,12 +702,13 @@ public class Damier {
 
                 tourActuel = tourActuel + 1;
 
+                verifierSiPartieTerminee();
+
             }
             // sinon, le joueur peut rejouer, donc la transformation en dame
             //      devrait être impossible. donc on ne la modifie pas.
 
             retirerPion(positionInitiale);
-            verifierSiPartieTerminee();
         } else {
             throw new IllegalArgumentException();
         }
@@ -712,9 +720,11 @@ public class Damier {
      */
     private void verifierSiPartieTerminee() {
 
-        HashMap<Integer, Pion> pions = getPions(getTourJoueur());
+        HashMap<Integer, Pion> pionsCouleur = getPions(getTourJoueur());
 
-        if (pions.isEmpty()) {
+        HashMap<Integer, Pion> pions = getPions();
+
+        if (pionsCouleur.isEmpty()) {
 
             if (getTourJoueur() == Pion.Couleur.Blanc) {
 
@@ -734,7 +744,8 @@ public class Damier {
             int key = entry.getKey(); // position
             Pion pion = entry.getValue(); // pion
 
-            if (pion != null && getDeplacementsPossibles(key, true).length > 0) {
+            if (pion != null && getDeplacementsPossibles(key, false).length > 0) {
+
                 joueurPeutJouer = true;
             }
         }
@@ -755,7 +766,7 @@ public class Damier {
         ElementHistorique retour = historique.peek();
         Pion p = findPion(retour.getPositionFinale());
 
-        Pion.Couleur inverse = retour.getCouleur() ==
+        Pion.Couleur couleurInverse = retour.getCouleur() ==
                 Pion.Couleur.Blanc ? Pion.Couleur.Noir : Pion.Couleur.Blanc;
 
         // Si le pion s'était transformé en dame, le change en pion AVANT de
@@ -775,7 +786,7 @@ public class Damier {
             ajouterPion(retour.getPositionInitiale(), new Pion(retour.getCouleur()));
         }
 
-        if (getTourJoueur() != retour.getCouleur()) {
+        if (getTourJoueur() == couleurInverse) {
 
             ElementHistorique[] elements = getHistoriqueTour();
 
@@ -784,8 +795,8 @@ public class Damier {
                 if (findPion(element.getPositionPrise()) == null) {
 
                     ajouterPion(element.getPositionPrise(),
-                            element.getSiPriseEstDame() ? new Dame(inverse) :
-                                    new Pion(inverse)
+                            element.getSiPriseEstDame() ? new Dame(couleurInverse) :
+                                    new Pion(couleurInverse)
                     );
                 }
             }
