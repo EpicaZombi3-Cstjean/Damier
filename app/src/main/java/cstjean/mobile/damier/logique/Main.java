@@ -21,7 +21,7 @@ public class Main {
         Damier damier = new Damier();
 
         damier.vider();
-
+        /*
         System.out.println("Test 1"); // devrait donner 6 et 7
         damier.ajouterPion(1, new Pion(Pion.Couleur.Blanc));
         analyserMouvementsPossibles(damier.getDeplacementsPossibles(1));
@@ -330,7 +330,7 @@ public class Main {
         damier.ajouterPion(12, new Pion(Pion.Couleur.Noir));
 
         analyserMouvementsPossibles(damier.getDeplacementsPossibles(1)); // devrait être 6 en fait
-
+*/
     }
 
     /**

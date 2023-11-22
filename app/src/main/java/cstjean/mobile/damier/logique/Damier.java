@@ -192,7 +192,7 @@ public class Damier {
      *
      * @return un array de tous les déplcements possibles.
      */
-    public Integer[] getDeplacementsPossibles(int position) {
+    public Integer[] getDeplacementsPossibles(int position, boolean doitEtrePrise) {
 
         if (!(position >= 1 && position <= 50)) {
             throw new IllegalArgumentException();
@@ -200,15 +200,21 @@ public class Damier {
 
         Pion pionJoueur = findPion(position);
 
+        Integer[] deplacementsPossibles = new Integer[0];
+
+        // pour éviter que l'algo crash, il return immédiatement déplacementspossibles, qui est vide...
         if (pionJoueur == null) {
-            return new Integer[0];
+            return deplacementsPossibles;
         }
 
         ArrayList<Integer[]> listeDePrises = new ArrayList<>();
 
+        Integer[] dernieresPrises = getPrisesFromHistorique(pionJoueur.getCouleur());
+
         // regarder les prises
         // modifie une liste grâce à la référence des valeurs passés en objets.
-        regarderPrises(listeDePrises, new Integer[0], position, pionJoueur, new Integer[0]);
+        regarderPrises(listeDePrises, new Integer[0], position, pionJoueur, dernieresPrises);
+
 
         if (!listeDePrises.isEmpty()) {
 
@@ -235,147 +241,103 @@ public class Damier {
                 }
             }
 
-            /* Force la plus grande prise */
-            HashMap<Integer, Pion> pionsCouleur = getPions(pionJoueur.getCouleur());
+            aAutrePionPlusDePrises(position, pionJoueur, listeDePrises);
 
-            // essaie d'empêcher le pion de jouer si un autre pion peut faire plus de prises
-            for (Map.Entry<Integer, Pion> entry : pionsCouleur.entrySet()) {
-                int key = entry.getKey(); // position
-                Pion pion = entry.getValue(); // pion
-
-                ArrayList<Integer[]> prisesIntermediaire = new ArrayList<>();
-                regarderPrises(prisesIntermediaire, new Integer[0], key, pionJoueur, new Integer[0]);
-
-                // si un autre pion peut faire une prise
-                if (pion != pionJoueur) {
-                    if (prisesIntermediaire.size() > listeDePrises.size()) {
-                        return new Integer[0]; // mouvement impossible
-                    }
-                }
-            }
-            /* Force la plus grande prise */
-
-            return chosenMoves.toArray(new Integer[0]); // unsure si ça marche
+            deplacementsPossibles = chosenMoves.toArray(new Integer[0]); // unsure si ça marche
 
         } else {
-            // pas de prise, donc déplacement "normal"
-            ArrayList<Integer> movesPossibles = new ArrayList<>();
+            if (!doitEtrePrise) {
+                // pas de prise, donc déplacement "normal"
+                deplacementsPossibles = getDeplacementsNormauxPossibles(position, pionJoueur);
+            }
+        }
 
-            if (!pionJoueur.estDame()) {
+        return deplacementsPossibles;
+    }
 
-                if (pionJoueur.getCouleur() == Pion.Couleur.Blanc) {
 
-                    int nextpos = prochaineCase(position, Direction.BasDroite);
-                    if (nextpos != -1 && findPion(nextpos) == null) {
-                        movesPossibles.add(nextpos);
-                    }
+    /**
+     *
+     */
+    private Integer[] getDeplacementsNormauxPossibles(int position, Pion pionJoueur) {
+        ArrayList<Integer> movesPossibles = new ArrayList<>();
 
-                    nextpos = prochaineCase(position, Direction.BasGauche);
-                    if (nextpos != -1 && findPion(nextpos) == null) {
-                        movesPossibles.add(nextpos);
-                    }
+        if (!pionJoueur.estDame()) {
 
-                } else {
+            if (pionJoueur.getCouleur() == Pion.Couleur.Blanc) {
 
-                    int nextpos = prochaineCase(position, Direction.HautDroite);
-                    if (nextpos != -1 && findPion(nextpos) == null) {
-                        movesPossibles.add(nextpos);
-                    }
-
-                    nextpos = prochaineCase(position, Direction.HautGauche);
-                    if (nextpos != -1 && findPion(nextpos) == null) {
-                        movesPossibles.add(nextpos);
-                    }
-
+                int nextpos = prochaineCase(position, Direction.BasDroite);
+                if (nextpos != -1 && findPion(nextpos) == null) {
+                    movesPossibles.add(nextpos);
                 }
 
-                return movesPossibles.toArray(new Integer[0]);
+                nextpos = prochaineCase(position, Direction.BasGauche);
+                if (nextpos != -1 && findPion(nextpos) == null) {
+                    movesPossibles.add(nextpos);
+                }
 
             } else {
 
-                for (Direction direction : Direction.values()) {
-
-                    int nextPos = prochaineCase(position, direction);
-
-                    for (;;) {
-
-                        if ((nextPos != -1 && findPion(nextPos) == null)) {
-                            movesPossibles.add(nextPos);
-
-                            nextPos = prochaineCase(nextPos, direction); // continuer à regarder + loin
-                        } else {
-                            break;
-                        }
-                    }
-
+                int nextpos = prochaineCase(position, Direction.HautDroite);
+                if (nextpos != -1 && findPion(nextpos) == null) {
+                    movesPossibles.add(nextpos);
                 }
 
-                return movesPossibles.toArray(new Integer[0]);
+                nextpos = prochaineCase(position, Direction.HautGauche);
+                if (nextpos != -1 && findPion(nextpos) == null) {
+                    movesPossibles.add(nextpos);
+                }
 
             }
+
+            return movesPossibles.toArray(new Integer[0]);
+
+        } else {
+
+            for (Direction direction : Direction.values()) {
+
+                int nextPos = prochaineCase(position, direction);
+
+                for (;;) {
+
+                    if ((nextPos != -1 && findPion(nextPos) == null)) {
+                        movesPossibles.add(nextPos);
+
+                        nextPos = prochaineCase(nextPos, direction); // continuer à regarder + loin
+                    } else {
+                        break;
+                    }
+                }
+
+            }
+
+            return movesPossibles.toArray(new Integer[0]);
+
         }
     }
 
-    /**
-     * Détermine tous les dépacements possible à partir d'une position. LORS D'UNE PRISE FORCÉE.
 
-     * @param position int qui représente la position du pion.
-     *
-     * @return un array de tous les déplcements possibles.
-     */
-    public Integer[] getDeplacementsPossiblesPriseForcee(int position) {
+    private boolean aAutrePionPlusDePrises(int position, Pion pionJoueur,
+                                           ArrayList<Integer[]> listeDePrises) {
+        /* Force la plus grande prise */
+        HashMap<Integer, Pion> pionsCouleur = getPions(pionJoueur.getCouleur());
 
-        if (!(position >= 1 && position <= 50)) {
-            throw new IllegalArgumentException();
-        }
+        // essaie d'empêcher le pion de jouer si un autre pion peut faire plus de prises
+        for (Map.Entry<Integer, Pion> entry : pionsCouleur.entrySet()) {
+            int key = entry.getKey(); // position
+            Pion pion = entry.getValue(); // pion
 
-        Pion pionJoueur = findPion(position);
+            ArrayList<Integer[]> prisesIntermediaire = new ArrayList<>();
+            regarderPrises(prisesIntermediaire, new Integer[0], key, pionJoueur, new Integer[0]);
 
-        if (pionJoueur == null) {
-            return new Integer[0];
-        }
-
-        ArrayList<Integer[]> listeDePrises = new ArrayList<>();
-
-        // pions pris dans les anciens tours selon l'historique
-        Integer[] prises = getPrisesFromHistorique(pionJoueur.getCouleur());
-
-        // regarder les prises
-        // modifie une liste grâce à la référence des valeurs passés en objets.
-
-        regarderPrises(listeDePrises, new Integer[0], position, pionJoueur, prises);
-
-        if (!listeDePrises.isEmpty()) {
-
-            int highestCount = 0;
-
-            ArrayList<Integer> chosenMoves = new ArrayList<>();
-
-            // O(n) puisque la for ne parcours que la liste, elle ne parcours pas les arrays DANS la liste
-
-            // TODO : CHANGER LA LOGIQUE AFIN QU'IL N'AJOUTE PAS LA POSITION DU PION, MAIS LA POSITION APRÈS!!!!!!
-            for (Integer[] listeDePris : listeDePrises) {
-
-                if (listeDePris.length >= highestCount) {
-
-                    if (listeDePris.length > highestCount) {
-                        // reset les chosenMoves.
-                        chosenMoves.clear();
-                        highestCount = listeDePris.length;
-                    }
-
-                    Direction directionVersPrise = calculateDirection(position, listeDePris[0]);
-
-                    // 2 prochaines cases parce que c'est là que le pion va.
-                    chosenMoves.add(prochaineCase(listeDePris[0],
-                            directionVersPrise));
+            // si un autre pion peut faire une prise
+            if (pion != pionJoueur) {
+                if (prisesIntermediaire.size() > listeDePrises.size()) {
+                    return false;
                 }
             }
-
-            return chosenMoves.toArray(new Integer[0]); // unsure si ça marche
         }
-
-        return new Integer[0];
+        return true;
     }
 
     /**
@@ -414,7 +376,7 @@ public class Damier {
 
                     int positionApresPrise = prochaineCase(nextPos, direction);
 
-                    if (findPion(positionApresPrise) == null) {
+                    if (findPion(positionApresPrise) == null && positionApresPrise != -1) {
 
                         // le nouvel array
                         Integer[] neoPrisesActuelles = new Integer[prisesActuelle.length + 1];
@@ -446,7 +408,7 @@ public class Damier {
 
                     boolean estDejaPris = estPositionDansArray(nextPos, prisesActuelle);
 
-                    if (nextPos == -1 || estDejaPris) {
+                    if (nextPos == -1 || estDejaPris || estPositionDansArray(nextPos, ignoreList)) {
                         break; // skip
                     }
 
@@ -456,7 +418,7 @@ public class Damier {
 
                         int positionApresPrise = prochaineCase(nextPos, direction);
 
-                        if (findPion(positionApresPrise) == null) {
+                        if (findPion(positionApresPrise) == null && positionApresPrise != -1) {
 
                             // le nouvel array
                             Integer[] neoPrisesActuelles = new Integer[prisesActuelle.length + 1];
@@ -591,7 +553,7 @@ public class Damier {
 
      * @return un boolean déterminant si la position existe.
      */
-    private static boolean estPositionDansArray(int position, Integer[] array) {
+    public static boolean estPositionDansArray(int position, Integer[] array) {
 
         boolean estDedans = false;
 
@@ -659,12 +621,12 @@ public class Damier {
                 // si le dernier pion joué n'est pas le même que lui qu'on essaie de déplacer right now.
                 return; // car le joueur ne devrait pas pouvoir jouer.
             }
-
-            deplacementsPossibles = getDeplacementsPossiblesPriseForcee(positionInitiale);
+            // prise forcée
+            deplacementsPossibles = getDeplacementsPossibles(positionInitiale, true);
 
         } else {
 
-            deplacementsPossibles = getDeplacementsPossibles(positionInitiale);
+            deplacementsPossibles = getDeplacementsPossibles(positionInitiale, false);
 
         }
 
@@ -691,7 +653,7 @@ public class Damier {
 
             historique.push(newElement);
 
-            Integer[] deplacementsPossiblesViaPosFinale = getDeplacementsPossiblesPriseForcee(positionFinale);
+            Integer[] deplacementsPossiblesViaPosFinale = getDeplacementsPossibles(positionFinale, true);
 
             if (deplacementsPossiblesViaPosFinale.length == 0 || historique.peek().getPositionPrise() == -1) {
                 /* FIN DE TOUR!!!!! */
@@ -772,7 +734,7 @@ public class Damier {
             int key = entry.getKey(); // position
             Pion pion = entry.getValue(); // pion
 
-            if (pion != null && getDeplacementsPossibles(key).length > 0) {
+            if (pion != null && getDeplacementsPossibles(key, true).length > 0) {
                 joueurPeutJouer = true;
             }
         }
@@ -800,7 +762,8 @@ public class Damier {
         // revenir à sa position initiale
         if (retour.getSiTransformationEnDame()) {
             retirerPion(retour.getPositionFinale());
-            ajouterPion(retour.getPositionFinale(), new Pion(retour.getCouleur()));
+            p = new Pion(retour.getCouleur());
+            ajouterPion(retour.getPositionFinale(), p);
         }
 
         // Remet le pion OU la dame a sa position initiale

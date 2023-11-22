@@ -81,7 +81,7 @@ public class ElementHistorique {
         ElementHistorique[] historiqueTour = damier.getHistoriqueTour();
 
         if (historiqueTour.length == 0) {
-            return "Empty";
+            return "";
         }
         StringBuilder stringBuilder = new StringBuilder();
 

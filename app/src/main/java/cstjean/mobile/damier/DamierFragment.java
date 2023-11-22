@@ -9,12 +9,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TableLayout;
+import android.widget.TextView;
+
+import java.io.PipedOutputStream;
 
 import cstjean.mobile.damier.logique.Damier;
+import cstjean.mobile.damier.logique.ElementHistorique;
 import cstjean.mobile.damier.logique.Pion;
 
 public class DamierFragment extends Fragment {
@@ -24,12 +29,18 @@ public class DamierFragment extends Fragment {
      */
     public Damier damier = new Damier();
 
+
+    TextView text_lastMove;
+
+    Button btn_back_reset;
+
     /**
      * Le ID des boutons, nous permettant de continuer à les utiliser.
      */
     int[] buttonIDs = new int[50];
 
     private InterfaceState interfaceState = InterfaceState.ShowOnly;
+    private int selectedSlot = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,7 +55,17 @@ public class DamierFragment extends Fragment {
 
         placerCasesDamier(view);
 
-        updateInterface(view,0);
+        text_lastMove = view.findViewById(R.id.text_lastMove);
+
+        btn_back_reset = view.findViewById(R.id.btn_back_reset);
+        btn_back_reset.setOnClickListener(v -> {
+
+            damier.retourArriere();
+            updateInterface(view);
+
+        }); // Note : je ne connais pas les lambdas.
+
+        updateInterface(view);
 
         return view;
     }
@@ -76,7 +97,7 @@ public class DamierFragment extends Fragment {
 
             // Setup du bouton.
             bouton.setLayoutParams(params);
-            bouton.setOnClickListener(v -> buttonPress(finalI)); // Note : je ne connais pas les lambdas.
+            bouton.setOnClickListener(v -> buttonPress(finalI, view)); // Note : je ne connais pas les lambdas.
 
             bouton.setScaleType(ImageView.ScaleType.FIT_XY);
             bouton.setPadding(5, 5, 5, 5);
@@ -110,15 +131,92 @@ public class DamierFragment extends Fragment {
         }
     }
 
-    private void buttonPress(int index) {
-        Log.d("oui", "oui");
+    private void buttonPress(int position, View view) {
+        if (interfaceState == InterfaceState.ShowOnly) {
+
+            Pion pion = damier.findPion(position);
+
+            if (pion != null && pion.getCouleur() == damier.getTourJoueur()) {
+
+                Integer[] deplacementsPossibles;
+
+                if (damier.getPrisesFromHistorique(pion.getCouleur()).length == 0
+                        || damier.getPrisesFromHistorique(
+                        pion.getCouleur() == Pion.Couleur.Blanc
+                                ? Pion.Couleur.Noir
+                                : Pion.Couleur.Blanc).length != 0) {
+
+                    deplacementsPossibles = damier.getDeplacementsPossibles(position, false);
+
+                } else {
+                    // prise forcée
+                    deplacementsPossibles = damier.getDeplacementsPossibles(position, true);
+
+                }
+
+                if (deplacementsPossibles.length > 0) {
+
+                    selectedSlot = position;
+                    interfaceState = InterfaceState.Selected;
+
+                }
+            }
+
+        } else if (interfaceState == InterfaceState.Selected) {
+
+            Pion pion = damier.findPion(selectedSlot);
+
+            if (pion != null && pion.getCouleur() == damier.getTourJoueur()) {
+
+                Integer[] deplacementsPossibles;
+
+                if (damier.getPrisesFromHistorique(pion.getCouleur()).length == 0
+                        || damier.getPrisesFromHistorique(
+                        pion.getCouleur() == Pion.Couleur.Blanc
+                                ? Pion.Couleur.Noir
+                                : Pion.Couleur.Blanc).length != 0) {
+
+                    deplacementsPossibles = damier.getDeplacementsPossibles(selectedSlot, false);
+
+                } else {
+                    // prise forcée
+                    deplacementsPossibles = damier.getDeplacementsPossibles(selectedSlot, true);
+
+                }
+
+                boolean isInPossibilities = Damier.estPositionDansArray(position, deplacementsPossibles);
+
+                if (isInPossibilities) {
+
+                    damier.deplacerPion(selectedSlot, position);
+                    selectedSlot = 0;
+                    interfaceState = InterfaceState.ShowOnly;
+
+                } else {
+
+                    selectedSlot = 0;
+                    interfaceState = InterfaceState.ShowOnly;
+
+                }
+            } else {
+
+                selectedSlot = 0;
+                interfaceState = InterfaceState.ShowOnly;
+
+            }
+        }
+
+        updateInterface(view);
+
     }
 
-    public void updateInterface(View view, int focusPos) {
+    public void updateInterface(View view) {
 
         for(int i = 1; i <= buttonIDs.length; i++) {
 
             ImageButton btn = view.findViewById(buttonIDs[i - 1]);
+
+            btn.setBackgroundResource(R.mipmap.ic_case_dark_grey);
 
             if (damier.findPion(i) != null) {
 
@@ -154,20 +252,50 @@ public class DamierFragment extends Fragment {
             }
         }
 
-        if (focusPos != 0) {
-            modifierCouleurCases(focusPos);
+        if (selectedSlot != 0 && interfaceState == InterfaceState.Selected) {
+            modifierCouleurCases(selectedSlot, view);
         }
+
+        text_lastMove.setText(ElementHistorique.getHistoriqueTour(damier));
     }
 
     /**
      * Modifie la couleur des cases si elles font partie des options possibles
      * et modifie la couleur de la case focusée.
      */
-    private void modifierCouleurCases(int position) {
+    private void modifierCouleurCases(int position, View view) {
 
-        damier.getDeplacementsPossibles(position);
+        Pion pion = damier.findPion(position);
 
+        if (pion != null && pion.getCouleur() == damier.getTourJoueur()) {
 
+            Integer[] deplacementsPossibles;
+
+            if (damier.getPrisesFromHistorique(pion.getCouleur()).length == 0
+                    || damier.getPrisesFromHistorique(
+                            pion.getCouleur() == Pion.Couleur.Blanc
+                                    ? Pion.Couleur.Noir
+                                    : Pion.Couleur.Blanc).length != 0) {
+
+                deplacementsPossibles = damier.getDeplacementsPossibles(position, false);
+
+            } else {
+                // prise forcée
+                deplacementsPossibles = damier.getDeplacementsPossibles(position, true);
+
+            }
+
+            for (int i = 0; i < deplacementsPossibles.length; i++) {
+                if (deplacementsPossibles[i] - 1 > 0 && deplacementsPossibles[i] - 1 <= 50) {
+
+                    ImageButton button = view.findViewById(buttonIDs[deplacementsPossibles[i] - 1]);
+
+                    button.setBackgroundResource(R.mipmap.ic_case_deplacement_possible);
+
+                }
+
+            }
+        }
 
     }
 
