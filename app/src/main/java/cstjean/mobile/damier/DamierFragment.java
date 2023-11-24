@@ -17,6 +17,8 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import java.io.PipedOutputStream;
+import java.util.ArrayList;
+import java.util.Stack;
 
 import cstjean.mobile.damier.logique.Damier;
 import cstjean.mobile.damier.logique.ElementHistorique;
@@ -31,8 +33,9 @@ public class DamierFragment extends Fragment {
 
     TextView textTourJoueur;
     TextView textLastMove;
-
     Button btn_back_reset;
+    final Stack<Integer> historiqueSelectedSlots = new Stack<>();
+
 
     /**
      * Le ID des boutons, nous permettant de continuer à les utiliser.
@@ -62,8 +65,7 @@ public class DamierFragment extends Fragment {
         btn_back_reset = view.findViewById(R.id.btn_back_reset);
         btn_back_reset.setOnClickListener(v -> {
 
-            damier.retourArriere();
-            updateInterface(view);
+            buttonRetourArrierePress(view);
 
         }); // Note : je ne connais pas les lambdas.
 
@@ -148,6 +150,17 @@ public class DamierFragment extends Fragment {
 
     }
 
+    private void buttonRetourArrierePress(View view) {
+        if (!historiqueSelectedSlots.isEmpty()) {
+
+            selectedSlot = historiqueSelectedSlots.pop();
+            interfaceState = InterfaceState.Selected;
+        }
+
+        damier.retourArriere();
+        updateInterface(view);
+
+    }
     private void modeShowOnly(int position) {
         Pion pion = damier.findPion(position);
 
@@ -206,8 +219,20 @@ public class DamierFragment extends Fragment {
                 // regarde si peut faire une autre 'PRISE'.
 
                 damier.deplacerPion(selectedSlot, position);
-                selectedSlot = 0;
-                interfaceState = InterfaceState.ShowOnly;
+                historiqueSelectedSlots.push(selectedSlot);
+
+                if (damier.getDeplacementsPossibles(position, true).length > 0
+                    && damier.findPion(position).getCouleur() == damier.getTourJoueur()
+                ) {
+
+                    selectedSlot = position;
+
+                } else {
+
+                    selectedSlot = 0;
+                    interfaceState = InterfaceState.ShowOnly;
+
+                }
 
             } else {
 
