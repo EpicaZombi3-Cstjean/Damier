@@ -695,7 +695,8 @@ public class Damier {
 
                 // le nettoyage final (enlève les pions pris.)
                 for (Integer posPrise : prisesEffectuees) {
-                    if (findPion(posPrise) != null && findPion(posPrise).getCouleur() != pionJoueur.getCouleur()) {
+                    if (posPrise != -1 && findPion(posPrise) != null &&
+                            findPion(posPrise).getCouleur() != pionJoueur.getCouleur()) {
                         retirerPion(posPrise); // retire tous les pions qui ont étés pris dans la prise.
                     }
                 }
@@ -744,7 +745,8 @@ public class Damier {
             int key = entry.getKey(); // position
             Pion pion = entry.getValue(); // pion
 
-            if (pion != null && getDeplacementsPossibles(key, false).length > 0) {
+            if (pion != null
+                    && getDeplacementsPossibles(key, false).length > 0) {
 
                 joueurPeutJouer = true;
             }
@@ -792,7 +794,7 @@ public class Damier {
 
             for (ElementHistorique element : elements) {
 
-                if (findPion(element.getPositionPrise()) == null) {
+                if (element.getPositionPrise() != -1 && findPion(element.getPositionPrise()) == null) {
 
                     ajouterPion(element.getPositionPrise(),
                             element.getSiPriseEstDame() ? new Dame(couleurInverse) :
