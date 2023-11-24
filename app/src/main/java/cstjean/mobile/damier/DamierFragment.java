@@ -136,80 +136,91 @@ public class DamierFragment extends Fragment {
     private void buttonPress(int position, View view) {
         if (interfaceState == InterfaceState.ShowOnly) {
 
-            Pion pion = damier.findPion(position);
-
-            if (pion != null && pion.getCouleur() == damier.getTourJoueur()) {
-
-                Integer[] deplacementsPossibles;
-
-                if (damier.getPrisesFromHistorique(pion.getCouleur()).length == 0
-                        || damier.getPrisesFromHistorique(
-                        pion.getCouleur() == Pion.Couleur.Blanc
-                                ? Pion.Couleur.Noir
-                                : Pion.Couleur.Blanc).length != 0) {
-
-                    deplacementsPossibles = damier.getDeplacementsPossibles(position, false);
-
-                } else {
-                    // prise forcée
-                    deplacementsPossibles = damier.getDeplacementsPossibles(position, true);
-
-                }
-
-                if (deplacementsPossibles.length > 0) {
-
-                    selectedSlot = position;
-                    interfaceState = InterfaceState.Selected;
-
-                }
-            }
+            modeShowOnly(position);
 
         } else if (interfaceState == InterfaceState.Selected) {
 
-            Pion pion = damier.findPion(selectedSlot);
+           modeSelected(position);
 
-            if (pion != null && pion.getCouleur() == damier.getTourJoueur()) {
+        }
 
-                Integer[] deplacementsPossibles;
+        updateInterface(view);
 
-                if (damier.getPrisesFromHistorique(pion.getCouleur()).length == 0
-                        || damier.getPrisesFromHistorique(
-                        pion.getCouleur() == Pion.Couleur.Blanc
-                                ? Pion.Couleur.Noir
-                                : Pion.Couleur.Blanc).length != 0) {
+    }
 
-                    deplacementsPossibles = damier.getDeplacementsPossibles(selectedSlot, false);
+    private void modeShowOnly(int position) {
+        Pion pion = damier.findPion(position);
 
-                } else {
-                    // prise forcée
-                    deplacementsPossibles = damier.getDeplacementsPossibles(selectedSlot, true);
+        if (pion != null && pion.getCouleur() == damier.getTourJoueur()) {
 
-                }
+            Integer[] deplacementsPossibles;
 
-                boolean isInPossibilities = Damier.estPositionDansArray(position, deplacementsPossibles);
+            if (damier.getPrisesFromHistorique(pion.getCouleur()).length == 0
+                    || damier.getPrisesFromHistorique(
+                    pion.getCouleur() == Pion.Couleur.Blanc
+                            ? Pion.Couleur.Noir
+                            : Pion.Couleur.Blanc).length != 0) {
 
-                if (isInPossibilities) {
+                deplacementsPossibles = damier.getDeplacementsPossibles(position, false);
 
-                    damier.deplacerPion(selectedSlot, position);
-                    selectedSlot = 0;
-                    interfaceState = InterfaceState.ShowOnly;
+            } else {
+                // prise forcée
+                deplacementsPossibles = damier.getDeplacementsPossibles(position, true);
 
-                } else {
+            }
 
-                    selectedSlot = 0;
-                    interfaceState = InterfaceState.ShowOnly;
+            if (deplacementsPossibles.length > 0) {
 
-                }
+                selectedSlot = position;
+                interfaceState = InterfaceState.Selected;
+
+            }
+        }
+
+    }
+
+    private void modeSelected(int position) {
+        Pion pion = damier.findPion(selectedSlot);
+
+        if (pion != null && pion.getCouleur() == damier.getTourJoueur()) {
+
+            Integer[] deplacementsPossibles;
+
+            if (damier.getPrisesFromHistorique(pion.getCouleur()).length == 0
+                    || damier.getPrisesFromHistorique(
+                    pion.getCouleur() == Pion.Couleur.Blanc
+                            ? Pion.Couleur.Noir
+                            : Pion.Couleur.Blanc).length != 0) {
+
+                deplacementsPossibles = damier.getDeplacementsPossibles(selectedSlot, false);
+
+            } else {
+                // prise forcée
+                deplacementsPossibles = damier.getDeplacementsPossibles(selectedSlot, true);
+
+            }
+
+            boolean isInPossibilities = Damier.estPositionDansArray(position, deplacementsPossibles);
+
+            if (isInPossibilities) {
+                // regarde si peut faire une autre 'PRISE'.
+
+                damier.deplacerPion(selectedSlot, position);
+                selectedSlot = 0;
+                interfaceState = InterfaceState.ShowOnly;
+
             } else {
 
                 selectedSlot = 0;
                 interfaceState = InterfaceState.ShowOnly;
 
             }
+        } else {
+
+            selectedSlot = 0;
+            interfaceState = InterfaceState.ShowOnly;
+
         }
-
-        updateInterface(view);
-
     }
 
     public void updateInterface(View view) {
@@ -287,7 +298,7 @@ public class DamierFragment extends Fragment {
                             pion.getCouleur() == Pion.Couleur.Blanc
                                     ? Pion.Couleur.Noir
                                     : Pion.Couleur.Blanc).length != 0) {
-
+                // déplacement (avec ou sans prise)
                 deplacementsPossibles = damier.getDeplacementsPossibles(position, false);
 
             } else {

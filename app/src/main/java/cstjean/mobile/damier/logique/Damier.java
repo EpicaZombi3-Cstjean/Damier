@@ -741,7 +741,7 @@ public class Damier {
 
         boolean joueurPeutJouer = false;
 
-        for (Map.Entry<Integer, Pion> entry : pions.entrySet()) {
+        for (Map.Entry<Integer, Pion> entry : pionsCouleur.entrySet()) {
             int key = entry.getKey(); // position
             Pion pion = entry.getValue(); // pion
 
@@ -768,9 +768,6 @@ public class Damier {
         ElementHistorique retour = historique.peek();
         Pion p = findPion(retour.getPositionFinale());
 
-        Pion.Couleur couleurInverse = retour.getCouleur() ==
-                Pion.Couleur.Blanc ? Pion.Couleur.Noir : Pion.Couleur.Blanc;
-
         // Si le pion s'était transformé en dame, le change en pion AVANT de
         // revenir à sa position initiale
         if (retour.getSiTransformationEnDame()) {
@@ -788,7 +785,7 @@ public class Damier {
             ajouterPion(retour.getPositionInitiale(), new Pion(retour.getCouleur()));
         }
 
-        if (getTourJoueur() == couleurInverse) {
+        if (getTourJoueur() == getCouleurInverse(retour.getCouleur())) {
 
             ElementHistorique[] elements = getHistoriqueTour();
 
@@ -797,8 +794,8 @@ public class Damier {
                 if (element.getPositionPrise() != -1 && findPion(element.getPositionPrise()) == null) {
 
                     ajouterPion(element.getPositionPrise(),
-                            element.getSiPriseEstDame() ? new Dame(couleurInverse) :
-                                    new Pion(couleurInverse)
+                            element.getSiPriseEstDame() ? new Dame(getCouleurInverse(retour.getCouleur())) :
+                                    new Pion(getCouleurInverse(retour.getCouleur()))
                     );
                 }
             }
@@ -924,6 +921,12 @@ public class Damier {
                 }
             }
         }
+    }
+
+    public Pion.Couleur getCouleurInverse(Pion.Couleur couleur) {
+
+        return couleur == Pion.Couleur.Blanc ? Pion.Couleur.Noir : Pion.Couleur.Blanc;
+
     }
 
     /**
