@@ -39,7 +39,7 @@ public class Damier {
      */
     public Damier() {
         this.etatPartie = EtatPartie.EnCours;
-        initialiser();
+        initialisertemp();
     }
 
     /**
@@ -175,6 +175,25 @@ public class Damier {
         etatPartie = EtatPartie.EnCours;
     }
 
+
+    public void initialisertemp() {
+        for (int i = 1; i <= 16; i++) {
+            ajouterPion(i, new Pion(Pion.Couleur.Blanc));
+        }
+        ajouterPion(17, new Pion(Pion.Couleur.Noir));
+
+        ajouterPion(18, new Pion());
+
+        ajouterPion(27, new Pion(Pion.Couleur.Noir));
+        ajouterPion(28, new Pion(Pion.Couleur.Noir));
+        ajouterPion(29, new Pion(Pion.Couleur.Noir));
+
+        tourActuel = 1;
+        historique.clear();
+        etatPartie = EtatPartie.EnCours;
+    }
+
+
     /**
      * Vide un damier. (Similaire à initialiser, mais sans qu'il y ait de pions)
      */
@@ -215,7 +234,7 @@ public class Damier {
         // modifie une liste grâce à la référence des valeurs passés en objets.
         regarderPrises(listeDePrises, new Integer[0], position, pionJoueur, dernieresPrises);
 
-        boolean aAutresPionsPlusDePrises = aAutrePionPlusDePrises(pionJoueur, listeDePrises);
+        boolean aAutresPionsPlusDePrises = aAutrePionPlusDePrises(pionJoueur, position, listeDePrises);
 
         if (aAutresPionsPlusDePrises) {
             return deplacementsPossibles;
@@ -224,31 +243,7 @@ public class Damier {
 
         if (!listeDePrises.isEmpty()) {
 
-            int highestCount = 0;
-
-            ArrayList<Integer> chosenMoves = new ArrayList<>();
-
-            for (Integer[] listeDePrise : listeDePrises) {
-
-                if (listeDePrise.length >= highestCount) {
-
-                    if (listeDePrise.length > highestCount) {
-                        // reset les Chosen1stMoves.
-                        chosenMoves.clear();
-                        highestCount = listeDePrise.length;
-                    }
-
-                    Direction directionVersPrise = calculateDirection(position, listeDePrise[0]);
-
-                    // 2 prochaines cases parce que c'est là que le pion va.
-                    chosenMoves.add(prochaineCase(listeDePrise[0],
-                            directionVersPrise));
-
-                }
-            }
-
-            deplacementsPossibles = chosenMoves.toArray(new Integer[0]); // unsure si ça marche
-
+            deplacementsPossibles = plusGrandePriseDepuisListe(position, listeDePrises);
 
         } else {
             if (!doitEtrePrise) {
@@ -322,8 +317,38 @@ public class Damier {
     }
 
 
-    private boolean aAutrePionPlusDePrises(Pion pionJoueur,
-                                           ArrayList<Integer[]> listeDePrises) {
+    public Integer[] plusGrandePriseDepuisListe(int position, ArrayList<Integer[]> listeDePrises) {
+
+        int highestCount = 0;
+
+        ArrayList<Integer> chosenMoves = new ArrayList<>();
+
+        for (Integer[] listeDePrise : listeDePrises) {
+
+            if (listeDePrise.length >= highestCount) {
+
+                if (listeDePrise.length > highestCount) {
+                    // reset les Chosen1stMoves.
+                    chosenMoves.clear();
+                    highestCount = listeDePrise.length;
+                }
+
+                Direction directionVersPrise = calculateDirection(position, listeDePrise[0]);
+
+                // 2 prochaines cases parce que c'est là que le pion va.
+                chosenMoves.add(prochaineCase(listeDePrise[0],
+                        directionVersPrise));
+
+            }
+        }
+
+        return chosenMoves.toArray(new Integer[0]);
+
+    }
+
+
+    private boolean aAutrePionPlusDePrises(Pion pionJoueur, int positionJoueur,
+                                           ArrayList<Integer[]> listeDePrises ) {
         /* Force la plus grande prise */
         HashMap<Integer, Pion> pionsCouleur = getPions(pionJoueur.getCouleur());
 
@@ -336,8 +361,13 @@ public class Damier {
                 ArrayList<Integer[]> prisesIntermediaire = new ArrayList<>();
                 regarderPrises(prisesIntermediaire, new Integer[0], key, pion, new Integer[0]);
 
+
+
+                Integer[] prisesPossibles = plusGrandePriseDepuisListe(key, prisesIntermediaire);
+                Integer[] prisesPossiblesJoueur = plusGrandePriseDepuisListe(positionJoueur, listeDePrises);
+
                 // si un autre pion peut faire une meilleure prise
-                if (prisesIntermediaire.size() > listeDePrises.size()) {
+                if (prisesPossibles.length > prisesPossiblesJoueur.length) {
                     return true;
                 }
             }
