@@ -39,7 +39,7 @@ public class Damier {
      */
     public Damier() {
         this.etatPartie = EtatPartie.EnCours;
-        initialisertemp();
+        initialiser();
     }
 
     /**
@@ -175,7 +175,7 @@ public class Damier {
         etatPartie = EtatPartie.EnCours;
     }
 
-
+    // TODO REMOVE SOON!!!
     public void initialisertemp() {
         for (int i = 1; i <= 16; i++) {
             ajouterPion(i, new Pion(Pion.Couleur.Blanc));
@@ -832,7 +832,7 @@ public class Damier {
 
             tourActuel -= 1;
         }
-
+        etatPartie = EtatPartie.EnCours;
         historique.pop();
     }
 
