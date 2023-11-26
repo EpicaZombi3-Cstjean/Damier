@@ -209,6 +209,11 @@ public class Damier {
         ajouterPion(10, new Pion(Pion.Couleur.Noir));
         ajouterPion(19, new Pion(Pion.Couleur.Noir));
 
+        ajouterPion(50, new Pion(Pion.Couleur.Blanc));
+        ajouterPion(44, new Pion(Pion.Couleur.Noir));
+        ajouterPion(33, new Pion(Pion.Couleur.Noir));
+
+
         tourActuel = 1;
         historique.clear();
         etatPartie = EtatPartie.EnCours;
@@ -256,7 +261,7 @@ public class Damier {
 
         boolean aAutresPionsPlusDePrises = aAutrePionPlusDePrises(pionJoueur, position, listeDePrises);
 
-        if (aAutresPionsPlusDePrises) {
+        if (aAutresPionsPlusDePrises && !doitEtrePrise) {
             return deplacementsPossibles;
         }
 
@@ -713,7 +718,6 @@ public class Damier {
         if (tour != pionJoueur.getCouleur() || getEtatPartie() != EtatPartie.EnCours) {
             return; // joueur ne peut pas jouer.
         }
-
 
         Integer[] deplacementsPossibles;
 
