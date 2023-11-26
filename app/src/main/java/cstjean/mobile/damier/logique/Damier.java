@@ -175,7 +175,10 @@ public class Damier {
         etatPartie = EtatPartie.EnCours;
     }
 
-    // TODO REMOVE SOON!!!
+    /**
+     // TODO REMOVE SOON!!!
+     * Aura servi à régler un bug où certaines prises ne fonctionnaient pas
+     */
     public void initialisertemp() {
         for (int i = 1; i <= 16; i++) {
             ajouterPion(i, new Pion(Pion.Couleur.Blanc));
@@ -193,6 +196,23 @@ public class Damier {
         etatPartie = EtatPartie.EnCours;
     }
 
+    /**
+     // TODO REMOVE SOON!!!
+     * Aura servi à régler un problème qui empêchait le forçage de la plus grande prise.
+     */
+    public void initialisertemp2() {
+
+        ajouterPion(1, new Pion(Pion.Couleur.Blanc));
+        ajouterPion(5, new Pion(Pion.Couleur.Blanc));
+
+        ajouterPion(7, new Pion(Pion.Couleur.Noir));
+        ajouterPion(10, new Pion(Pion.Couleur.Noir));
+        ajouterPion(19, new Pion(Pion.Couleur.Noir));
+
+        tourActuel = 1;
+        historique.clear();
+        etatPartie = EtatPartie.EnCours;
+    }
 
     /**
      * Vide un damier. (Similaire à initialiser, mais sans qu'il y ait de pions)
@@ -240,10 +260,9 @@ public class Damier {
             return deplacementsPossibles;
         }
 
-
         if (!listeDePrises.isEmpty()) {
 
-            deplacementsPossibles = plusGrandePriseDepuisListe(position, listeDePrises);
+            deplacementsPossibles = plusGrandesPrisesDepuisListe(position, listeDePrises);
 
         } else {
             if (!doitEtrePrise) {
@@ -257,7 +276,11 @@ public class Damier {
 
 
     /**
-     *
+     * Obtient les déplacements possibles dans le cas où il n'y aurait pas de prise.
+
+     * @param position la position du pion du joueur.
+     * @param pionJoueur le pion du joueur.
+     * @return Un array d'Integer des déplacements possibles.
      */
     private Integer[] getDeplacementsNormauxPossibles(int position, Pion pionJoueur) {
         ArrayList<Integer> movesPossibles = new ArrayList<>();
@@ -316,8 +339,15 @@ public class Damier {
         }
     }
 
+    /**
+     * Cette fonction trouve la plus grande prise dans une liste de choix de prises.
 
-    public Integer[] plusGrandePriseDepuisListe(int position, ArrayList<Integer[]> listeDePrises) {
+     * @param position la position du pion qui fait les prises. (pour certains calculs)
+     * @param listeDePrises la liste de prise (ArrayList de Array d'Integers.)
+
+     * @return Un array d'Integer qui représente la plus grande prise
+     */
+    public Integer[] plusGrandesPrisesDepuisListe(int position, ArrayList<Integer[]> listeDePrises) {
 
         int highestCount = 0;
 
@@ -341,12 +371,51 @@ public class Damier {
 
             }
         }
-
         return chosenMoves.toArray(new Integer[0]);
-
     }
 
+    /**
+     * Regarde toutes les possibilitées de prises offertes par la liste de prises, puis retourne
+     * la longueur du/des plus longue.s.
 
+     * @param position la position qui sert à calculer les positions. // (p-t inutile en ce cas) // TODO
+     * @param listeDePrises la liste de prise.
+     * @return
+     */
+    public int longueurPlusGrandePrise(int position, ArrayList<Integer[]> listeDePrises) {
+
+        int highestCount = 0;
+
+        ArrayList<Integer> chosenMoves = new ArrayList<>();
+
+        for (Integer[] listeDePrise : listeDePrises) {
+
+            if (listeDePrise.length >= highestCount) {
+
+                if (listeDePrise.length > highestCount) {
+                    // reset les Chosen1stMoves.
+                    chosenMoves.clear();
+                    highestCount = listeDePrise.length;
+                }
+
+                Direction directionVersPrise = calculateDirection(position, listeDePrise[0]);
+
+                // 2 prochaines cases parce que c'est là que le pion va.
+                chosenMoves.add(prochaineCase(listeDePrise[0],
+                        directionVersPrise));
+            }
+        }
+        return highestCount;
+    }
+
+    /**
+     * Regarde tous les pions, s'il y en a un qui peut jouer plus de prises que le pion sélectionné
+
+     * @param pionJoueur
+     * @param positionJoueur
+     * @param listeDePrises
+     * @return
+     */
     private boolean aAutrePionPlusDePrises(Pion pionJoueur, int positionJoueur,
                                            ArrayList<Integer[]> listeDePrises ) {
         /* Force la plus grande prise */
@@ -361,13 +430,11 @@ public class Damier {
                 ArrayList<Integer[]> prisesIntermediaire = new ArrayList<>();
                 regarderPrises(prisesIntermediaire, new Integer[0], key, pion, new Integer[0]);
 
-
-
-                Integer[] prisesPossibles = plusGrandePriseDepuisListe(key, prisesIntermediaire);
-                Integer[] prisesPossiblesJoueur = plusGrandePriseDepuisListe(positionJoueur, listeDePrises);
+                int nbPrisesPossibles = longueurPlusGrandePrise(key, prisesIntermediaire);
+                int nbPrisesPossiblesJoueur = longueurPlusGrandePrise(positionJoueur, listeDePrises);
 
                 // si un autre pion peut faire une meilleure prise
-                if (prisesPossibles.length > prisesPossiblesJoueur.length) {
+                if (nbPrisesPossibles > nbPrisesPossiblesJoueur) {
                     return true;
                 }
             }
