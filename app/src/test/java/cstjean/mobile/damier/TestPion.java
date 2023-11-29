@@ -5,6 +5,9 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
+import cstjean.mobile.damier.logique.Damier;
+import cstjean.mobile.damier.logique.Pion;
+
 /** Teste la classe Pion.
  * La classe de pion qu'on dépose sur un damier.
 

@@ -2,10 +2,6 @@ package cstjean.mobile.damier;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,19 +11,19 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TextView;
-
-import java.io.PipedOutputStream;
-import java.util.ArrayList;
-import java.util.Stack;
-
+import androidx.fragment.app.Fragment;
 import cstjean.mobile.damier.logique.Damier;
 import cstjean.mobile.damier.logique.ElementHistorique;
 import cstjean.mobile.damier.logique.Pion;
+import java.util.Stack;
 
+/**
+ * Le fragment du damier.
+ */
 public class DamierFragment extends Fragment {
 
     /**
-     * Le damier utilisé // TODO UTILIER UN SINGLETON?
+     * Le damier utilisé. // TODO UTILIER UN SINGLETON?
      */
     public Damier damier = new Damier();
 
@@ -36,7 +32,9 @@ public class DamierFragment extends Fragment {
     Button btn_back_reset;
     final Stack<Integer> historiqueSelectedSlots = new Stack<>();
 
-
+    public Damier getDamier() {
+        return damier;
+    }
     /**
      * Le ID des boutons, nous permettant de continuer à les utiliser.
      */

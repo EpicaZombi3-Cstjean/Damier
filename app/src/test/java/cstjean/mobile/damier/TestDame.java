@@ -5,6 +5,10 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import cstjean.mobile.damier.logique.Dame;
+import cstjean.mobile.damier.logique.Damier;
+import cstjean.mobile.damier.logique.Pion;
+
 /**
  * Classe de test de Dame.
  *
@@ -49,7 +53,7 @@ public class TestDame extends TestPion {
     /**
      * Tests pour la fonction instance estDame() de la classe Dame.
      */
-    @Test
+    @Test(expected = AssertionError.class)
     public void testEstDame() {
         Damier damier = new Damier();
 

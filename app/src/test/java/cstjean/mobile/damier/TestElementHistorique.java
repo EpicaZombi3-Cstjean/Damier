@@ -5,6 +5,11 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import cstjean.mobile.damier.logique.Dame;
+import cstjean.mobile.damier.logique.Damier;
+import cstjean.mobile.damier.logique.ElementHistorique;
+import cstjean.mobile.damier.logique.Pion;
+
 /**
  * La classe d'élément d'historique utilisée dans le travail.
 
@@ -31,8 +36,9 @@ public class TestElementHistorique {
     @Test
     public void testPrint() {
 
-        assertEquals("Empty", ElementHistorique.getHistoriqueTour(damier));
+        assertEquals("", ElementHistorique.getHistoriqueTour(damier));
 
+        damier.vider();
         damier.ajouterPion(18, new Dame(Pion.Couleur.Blanc));
 
         damier.ajouterPion(23, new Dame(Pion.Couleur.Noir));
@@ -47,11 +53,12 @@ public class TestElementHistorique {
         assertEquals("18×29×40", ElementHistorique.getHistoriqueTour(damier));
 
         // changement de tour
+        damier.vider();
 
         damier.ajouterPion(1, new Pion(Pion.Couleur.Blanc));
+        damier.ajouterPion(50, new Pion(Pion.Couleur.Noir));
         damier.deplacerPion(1, 6);
 
-        damier.ajouterPion(50, new Pion(Pion.Couleur.Noir));
 
         damier.deplacerPion(50, 45);
 
