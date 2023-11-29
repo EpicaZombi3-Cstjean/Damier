@@ -30,6 +30,7 @@ public class TestDamier {
     @Before
     public void setUp() {
         damier = Damier.getInstance();
+        damier.vider();
     }
 
     /**
@@ -37,6 +38,7 @@ public class TestDamier {
      */
     @Test
     public void testCreer() {
+        damier.initialiser();
         assertEquals(40, damier.getCount());
     }
 
@@ -289,7 +291,7 @@ public class TestDamier {
     /**
      * Test de déplacement de dame lorsqu'elle est bloquée.
      */
-    @Test
+    @Test (expected = IllegalArgumentException.class)
     public void testDeplacementDameBloque() {
 
         damier.ajouterPion(50, new Dame(Pion.Couleur.Blanc));

@@ -55,7 +55,7 @@ public class TestDame extends TestPion {
      */
     @Test(expected = AssertionError.class)
     public void testEstDame() {
-        Damier damier = new Damier();
+        Damier damier = Damier.getInstance();
 
         damier.ajouterPion(8, new Dame(Pion.Couleur.Blanc));
         damier.ajouterPion(6, new Dame(Pion.Couleur.Blanc));

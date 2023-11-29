@@ -27,7 +27,8 @@ public class TestElementHistorique {
      */
     @Before
     public void setUp() {
-        damier = new Damier();
+        damier = Damier.getInstance();
+        damier.vider();
     }
 
     /**

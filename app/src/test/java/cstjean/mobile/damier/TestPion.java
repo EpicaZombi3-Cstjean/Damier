@@ -3,6 +3,7 @@ package cstjean.mobile.damier;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import cstjean.mobile.damier.logique.Damier;
@@ -15,6 +16,14 @@ import cstjean.mobile.damier.logique.Pion;
  */
 public class TestPion {
 
+    private Damier damier;
+    /**
+     * La méthode de Setup.
+     */
+    @Before
+    public void setUp() {
+        damier = Damier.getInstance();
+    }
     /**
      * Teste la création du pion.
      */
@@ -45,14 +54,12 @@ public class TestPion {
      */
     @Test
     public void testClone() {
-        Damier d = new Damier();
-        d.initialiser();
         assertEquals(Pion.Couleur.Blanc, Pion.clone(new Pion()).getCouleur());
 
         assertEquals(Pion.Couleur.Blanc, Pion.clone(new Pion(Pion.Couleur.Blanc)).getCouleur());
 
         assertEquals(Pion.Couleur.Noir, Pion.clone(new Pion(Pion.Couleur.Noir)).getCouleur());
 
-        assertNull(Pion.clone(d.findPion(24)));
+        assertNull(Pion.clone(damier.findPion(24)));
     }
 }
