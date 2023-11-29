@@ -342,6 +342,10 @@ public class DamierFragment extends Fragment {
                 }
 
             }
+
+            ImageButton buttonPressed = view.findViewById(buttonIDs[position - 1]);
+
+            buttonPressed.setBackgroundResource(R.mipmap.ic_case_selectionnee);
         }
 
     }
