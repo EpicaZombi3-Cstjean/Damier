@@ -25,7 +25,7 @@ public class DamierFragment extends Fragment {
     /**
      * Le damier utilisé. // TODO UTILIER UN SINGLETON?
      */
-    public Damier damier = new Damier();
+    public Damier damier = Damier.getInstance();
 
     TextView textTourJoueur;
     TextView textLastMove;

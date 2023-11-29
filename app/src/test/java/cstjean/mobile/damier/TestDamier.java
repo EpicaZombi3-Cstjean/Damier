@@ -29,7 +29,7 @@ public class TestDamier {
      */
     @Before
     public void setUp() {
-        damier = new Damier();
+        damier = Damier.getInstance();
     }
 
     /**
@@ -407,12 +407,19 @@ public class TestDamier {
     @Test (expected = IllegalArgumentException.class)
     public void testGetDeplacementsPossibles() {
 
+        damier.vider();
+        Integer[] deplacementPossibleVide = new Integer[0];
+
+        assertEquals(deplacementPossibleVide, damier.getDeplacementsPossibles
+                (6, false));
+
         damier.ajouterPion(50, new Pion(Pion.Couleur.Blanc));
 
         assertEquals(0, damier.getDeplacementsPossibles(49, false).length);
 
         assertEquals(0, damier.getDeplacementsPossibles(50, false).length);
         damier.getDeplacementsPossibles(51, true);
+
 
     }
 

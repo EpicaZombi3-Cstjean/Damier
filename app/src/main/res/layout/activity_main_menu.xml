@@ -2,10 +2,9 @@
 <androidx.fragment.app.FragmentContainerView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_container"
-    android:name="cstjean.mobile.damier.DamierFragment"
     android:layout_width="match_parent"
+    android:id="@+id/fragment_container"
+    android:name="cstjean.mobile.damier.MainMenuFragment"
     android:layout_height="match_parent"
-    tools:context=".DamierActivity" >
-
+    tools:context=".MainMenuActivity">
 </androidx.fragment.app.FragmentContainerView>

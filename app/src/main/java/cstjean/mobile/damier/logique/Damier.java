@@ -21,6 +21,8 @@ public class Damier {
      */
     private int tourActuel = 1;
 
+    private static Damier damier = null;
+
     // should be private
     /**
      * L'historique de déplacement, contient plusieurs informations, comme la position initiale du déplacement,
@@ -37,9 +39,16 @@ public class Damier {
     /**
      * Le constructeur du damier.
      */
-    public Damier() {
+    private Damier() {
         this.etatPartie = EtatPartie.EnCours;
         initialiser();
+    }
+
+    public static Damier getInstance() {
+        if (damier == null) {
+            damier = new Damier();
+        }
+        return damier;
     }
 
     /**

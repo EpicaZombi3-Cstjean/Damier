@@ -18,7 +18,7 @@ public class Main {
      */
     public static void main(String[] args) {
 
-        Damier damier = new Damier();
+        Damier damier = Damier.getInstance();
 
         damier.vider();
         /*
