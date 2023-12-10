@@ -222,7 +222,6 @@ public class Damier {
         ajouterPion(44, new Pion(Pion.Couleur.Noir));
         ajouterPion(33, new Pion(Pion.Couleur.Noir));
 
-
         tourActuel = 1;
         historique.clear();
         etatPartie = EtatPartie.EnCours;
@@ -1033,7 +1032,7 @@ public class Damier {
         }
     }
 
-    public Pion.Couleur getCouleurInverse(Pion.Couleur couleur) {
+    public static Pion.Couleur getCouleurInverse(Pion.Couleur couleur) {
 
         return couleur == Pion.Couleur.Blanc ? Pion.Couleur.Noir : Pion.Couleur.Blanc;
 

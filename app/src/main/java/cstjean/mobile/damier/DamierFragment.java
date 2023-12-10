@@ -329,8 +329,11 @@ public class DamierFragment extends Fragment {
 
                 Integer[] dernierePrise = damier.getPrisesFromHistorique(pion.getCouleur());
 
-                ImageButton pr = view.findViewById(buttonIDs[dernierePrise[0]]);
-                pr.setBackgroundResource(R.mipmap.ic_case_prise);
+                for (int i = 0; i < dernierePrise.length; i++) {
+                    ImageButton pr = view.findViewById(buttonIDs[dernierePrise[i] - 1]);
+                    pr.setBackgroundResource(R.mipmap.ic_case_prise);
+                }
+
             }
 
             for (int i = 0; i < deplacementsPossibles.length; i++) {
@@ -343,7 +346,6 @@ public class DamierFragment extends Fragment {
                 }
 
             }
-
 
             ImageButton buttonPressed = view.findViewById(buttonIDs[position - 1]);
 
