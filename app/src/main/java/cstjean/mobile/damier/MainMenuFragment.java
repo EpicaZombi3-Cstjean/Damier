@@ -17,6 +17,10 @@ import java.util.Objects;
  * create an instance of this fragment.
  */
 public class MainMenuFragment extends Fragment {
+
+    private final String KEYNOMBLANC = "nom_blanc";
+    private final String KEYNOMNOIR = "nom_noir";
+
     /**
      * Le texte pour écrire le nom du joueur blanc.
      */
@@ -31,7 +35,6 @@ public class MainMenuFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    // TODO mettre une logique pour que le texte ne soit pas vide
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,8 +52,8 @@ public class MainMenuFragment extends Fragment {
             nom2 = nom2.replace(" ", "");
             if (!TextUtils.isEmpty(nom1) && !TextUtils.isEmpty(nom2)) {
                 Intent intent = new Intent(getActivity(), DamierActivity.class);
-                intent.putExtra("nomJoueur1", nom1);
-                intent.putExtra("nomJoueur2", nom2);
+                intent.putExtra(KEYNOMBLANC, nom1);
+                intent.putExtra(KEYNOMNOIR, nom2);
                 startActivity(intent);
             }
         });

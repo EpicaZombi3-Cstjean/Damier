@@ -186,27 +186,6 @@ public class Damier {
 
     /**
      // TODO REMOVE SOON!!!
-     * Aura servi à régler un bug où certaines prises ne fonctionnaient pas
-     */
-    public void initialisertemp() {
-        for (int i = 1; i <= 16; i++) {
-            ajouterPion(i, new Pion(Pion.Couleur.Blanc));
-        }
-        ajouterPion(17, new Pion(Pion.Couleur.Noir));
-
-        ajouterPion(18, new Pion());
-
-        ajouterPion(27, new Pion(Pion.Couleur.Noir));
-        ajouterPion(28, new Pion(Pion.Couleur.Noir));
-        ajouterPion(29, new Pion(Pion.Couleur.Noir));
-
-        tourActuel = 1;
-        historique.clear();
-        etatPartie = EtatPartie.EnCours;
-    }
-
-    /**
-     // TODO REMOVE SOON!!!
      * Aura servi à régler un problème qui empêchait le forçage de la plus grande prise.
      */
     public void initialisertemp2() {

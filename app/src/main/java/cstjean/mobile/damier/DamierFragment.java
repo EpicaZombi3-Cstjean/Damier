@@ -27,6 +27,12 @@ public class DamierFragment extends Fragment {
      */
     public Damier damier = Damier.getInstance();
 
+    private final String KEYNOMBLANC = "nom_blanc";
+    private final String KEYNOMNOIR = "nom_noir";
+
+    private static String nomJoueurBlanc = null;
+    private static String nomJoueurNoir = null;
+
     TextView textTourJoueur;
     TextView textLastMove;
     Button btn_back_reset;
@@ -53,6 +59,11 @@ public class DamierFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+
+        if (nomJoueurBlanc == null && nomJoueurNoir == null) {
+            nomJoueurBlanc = getActivity().getIntent().getStringExtra(KEYNOMBLANC);
+            nomJoueurNoir = getActivity().getIntent().getStringExtra(KEYNOMNOIR);
+        }
 
         placerCasesDamier(view);
 
@@ -127,7 +138,6 @@ public class DamierFragment extends Fragment {
                 gridLayout.addView(bouton);
                 bouton.setContentDescription("Position " + finalI + ", Case Noire");
             }
-
 
         }
     }
@@ -293,14 +303,15 @@ public class DamierFragment extends Fragment {
 
         textLastMove.setText(ElementHistorique.getHistoriqueTour(damier));
 
-        if (damier.getEtatPartie() == Damier.EtatPartie.EnCours) {
+        StringBuilder stringBuilder = new StringBuilder(50);
 
-            textTourJoueur.setText("Joueur actuel: " + damier.getTourJoueur().toString());
+        stringBuilder.append(damier.getEtatPartie() == Damier.EtatPartie.EnCours ?
+                "Joueur actuel: " : "Vainqueur: ");
 
-        } else {
+        stringBuilder.append(damier.getTourJoueur() == Pion.Couleur.Blanc ?
+                nomJoueurBlanc : nomJoueurNoir);
 
-            textTourJoueur.setText(damier.getEtatPartie().toString());
-        }
+        textTourJoueur.setText(stringBuilder.toString());
     }
 
     /**
@@ -337,7 +348,7 @@ public class DamierFragment extends Fragment {
             }
 
             for (int i = 0; i < deplacementsPossibles.length; i++) {
-                if (deplacementsPossibles[i] - 1 > 0 && deplacementsPossibles[i] - 1 <= 50) {
+                if (deplacementsPossibles[i] - 1 >= 0 && deplacementsPossibles[i] - 1 <= 50) {
 
                     ImageButton button = view.findViewById(buttonIDs[deplacementsPossibles[i] - 1]);
 
