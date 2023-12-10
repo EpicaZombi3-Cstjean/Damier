@@ -123,7 +123,6 @@ public class DamierFragment extends Fragment {
                 gridLayout.addView(caseBlanche);
                 bouton.setContentDescription("Position " + finalI + ", Case Blanche");
             } else {
-
                 gridLayout.addView(caseBlanche);
                 gridLayout.addView(bouton);
                 bouton.setContentDescription("Position " + finalI + ", Case Noire");
@@ -328,6 +327,10 @@ public class DamierFragment extends Fragment {
                 // prise forcée
                 deplacementsPossibles = damier.getDeplacementsPossibles(position, true);
 
+                Integer[] dernierePrise = damier.getPrisesFromHistorique(pion.getCouleur());
+
+                ImageButton pr = view.findViewById(buttonIDs[dernierePrise[0]]);
+                pr.setBackgroundResource(R.mipmap.ic_case_prise);
             }
 
             for (int i = 0; i < deplacementsPossibles.length; i++) {
@@ -340,6 +343,7 @@ public class DamierFragment extends Fragment {
                 }
 
             }
+
 
             ImageButton buttonPressed = view.findViewById(buttonIDs[position - 1]);
 
