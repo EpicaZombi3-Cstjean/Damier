@@ -71,10 +71,10 @@ public class ElementHistorique {
     }
 
     /**
-     * Ajoute l'historique du tour.
+     * Donne une string qui représente l'historique du tour (en manoury).
 
      * @param damier le damier concerné.
-     * @return l'historique.
+     * @return les mouvements (combinés, en manoury).
      */
     public static String getHistoriqueTour(Damier damier) {
 
@@ -132,6 +132,35 @@ public class ElementHistorique {
         }
 
         if (historiqueTour[historiqueTour.length - 1].getCouleur() == Pion.Couleur.Noir) {
+            stringBuilder.append(')');
+        }
+
+        return stringBuilder.toString();
+    }
+
+    /**
+     * Donne une string qui représente un mouvement unique (en manoury).
+
+     * @param elementHistorique l'élément d'historique concerné.
+     * @return la string du mouvement
+     */
+    public static String getMouvementString(ElementHistorique elementHistorique) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (elementHistorique.getCouleur() == Pion.Couleur.Noir) {
+            stringBuilder.append('(');
+        }
+
+        stringBuilder.append(elementHistorique.positionInitiale);
+
+        stringBuilder.append(
+                elementHistorique.positionPrise == -1 ? '-' : '×'
+        );
+
+        stringBuilder.append(elementHistorique.positionFinale);
+
+        if (elementHistorique.getCouleur() == Pion.Couleur.Noir) {
             stringBuilder.append(')');
         }
 

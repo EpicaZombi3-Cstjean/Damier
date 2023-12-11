@@ -207,6 +207,21 @@ public class Damier {
     }
 
     /**
+     * Ce getter retourne un arraylist d'éléments d'historique.
+     * @return un arraylist des éléments historique, triés du plus récent au plus ancien.
+     */
+    public ArrayList<ElementHistorique> getElementsHistoriquesNewestToOldest() {
+
+        ArrayList<ElementHistorique> nouvelleListe = new ArrayList<>();
+
+        for (int i = historique.size() - 1; i >= 0; i--) {
+            nouvelleListe.add(historique.get(i));
+        }
+
+        return nouvelleListe;
+    }
+
+    /**
      * Vide un damier. (Similaire à initialiser, mais sans qu'il y ait de pions)
      */
     public void vider() {

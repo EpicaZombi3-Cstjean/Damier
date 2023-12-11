@@ -12,9 +12,12 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import cstjean.mobile.damier.logique.Damier;
 import cstjean.mobile.damier.logique.ElementHistorique;
 import cstjean.mobile.damier.logique.Pion;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -25,18 +28,22 @@ public class DamierFragment extends Fragment {
     /**
      * Le damier utilisé. // TODO UTILIER UN SINGLETON?
      */
-    public Damier damier = Damier.getInstance();
+    private final Damier damier = Damier.getInstance();
 
     private final String KEYNOMBLANC = "nom_blanc";
     private final String KEYNOMNOIR = "nom_noir";
 
     private static String nomJoueurBlanc = null;
     private static String nomJoueurNoir = null;
+    private final Stack<Integer> historiqueSelectedSlots = new Stack<>();
 
-    TextView textTourJoueur;
-    TextView textLastMove;
-    Button btn_back_reset;
-    final Stack<Integer> historiqueSelectedSlots = new Stack<>();
+
+    private RecyclerView recyclerViewElementHistorique;
+    private TextView textTourJoueur;
+    private TextView textLastMove;
+    private Button btn_back_reset;
+
+    private ElementHistoriqueListAdapter adapterElementHistorique;
 
     public Damier getDamier() {
         return damier;
@@ -78,6 +85,8 @@ public class DamierFragment extends Fragment {
 
         }); // Note : je ne connais pas les lambdas.
 
+        recyclerViewElementHistorique = view.findViewById(R.id.historique_mouvements);
+        recyclerViewElementHistorique.setLayoutManager(new LinearLayoutManager(getActivity()));
         updateInterface(view);
 
         return view;
@@ -145,16 +154,14 @@ public class DamierFragment extends Fragment {
     private void buttonPress(int position, View view) {
         if (interfaceState == InterfaceState.ShowOnly) {
 
-            modeShowOnly(position);
+            btnPressModeShowOnly(position);
+            updateInterface(view);
 
         } else if (interfaceState == InterfaceState.Selected) {
 
-           modeSelected(position);
-
-        }
-
-        updateInterface(view);
-
+            btnPressModeSelected(position);
+            updateInterface(view);
+        } else {}
     }
 
     private void buttonRetourArrierePress(View view) {
@@ -168,7 +175,7 @@ public class DamierFragment extends Fragment {
         updateInterface(view);
 
     }
-    private void modeShowOnly(int position) {
+    private void btnPressModeShowOnly(int position) {
         Pion pion = damier.findPion(position);
 
         if (pion != null && pion.getCouleur() == damier.getTourJoueur()) {
@@ -196,10 +203,9 @@ public class DamierFragment extends Fragment {
 
             }
         }
-
     }
 
-    private void modeSelected(int position) {
+    private void btnPressModeSelected(int position) {
         Pion pion = damier.findPion(selectedSlot);
 
         if (pion != null && pion.getCouleur() == damier.getTourJoueur()) {
@@ -309,9 +315,20 @@ public class DamierFragment extends Fragment {
                 "Joueur actuel: " : "Vainqueur: ");
 
         stringBuilder.append(damier.getTourJoueur() == Pion.Couleur.Blanc ?
-                nomJoueurBlanc : nomJoueurNoir);
+                damier.getEtatPartie() == Damier.EtatPartie.EnCours ? nomJoueurBlanc : nomJoueurNoir
+                :
+                damier.getEtatPartie() == Damier.EtatPartie.EnCours ? nomJoueurNoir : nomJoueurBlanc
+        );
 
         textTourJoueur.setText(stringBuilder.toString());
+
+        List<ElementHistorique> elementsHistoriquesNewestToOldest = damier.getElementsHistoriquesNewestToOldest();
+        adapterElementHistorique = new ElementHistoriqueListAdapter(elementsHistoriquesNewestToOldest);
+        recyclerViewElementHistorique.setAdapter(adapterElementHistorique);
+
+        if (damier.getEtatPartie() != Damier.EtatPartie.EnCours) {
+            interfaceState = InterfaceState.GameOver;
+        }
     }
 
     /**
@@ -369,6 +386,8 @@ public class DamierFragment extends Fragment {
      *
      */
     private enum InterfaceState {
-        ShowOnly, Selected, GameOver
+        ShowOnly,
+        Selected,
+        GameOver
     }
 }
