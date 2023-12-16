@@ -515,23 +515,56 @@ public class TestDamier {
     /**
      * Test représentation d'exercice 3 je crois.
      */
-    /*@Test
+    @Test
+    public void testReplacerPionsRetourArriere() {
+        damier.vider();
+        damier.ajouterPion(1, new Dame(Pion.Couleur.Blanc));
+        damier.ajouterPion(7, new Dame(Pion.Couleur.Noir));
+
+        // anti game finish
+        damier.ajouterPion(5, new Dame(Pion.Couleur.Blanc));
+        damier.ajouterPion(50, new Dame(Pion.Couleur.Noir));
+
+        damier.deplacerPion(1, 12);
+
+        damier.retourArriere();
+
+        assertNotNull(damier.findPion(7));
+
+        damier.vider();
+
+        damier.ajouterPion(1, new Pion(Pion.Couleur.Blanc));
+        damier.ajouterPion(7, new Pion(Pion.Couleur.Noir));
+
+        // anti game finish
+        damier.ajouterPion(5, new Pion(Pion.Couleur.Blanc));
+        damier.ajouterPion(50, new Pion(Pion.Couleur.Noir));
+
+        damier.deplacerPion(1, 12);
+
+        damier.retourArriere();
+
+        assertNotNull(damier.findPion(7));
+    }
+
+    @Test
     public void testRepresentation() {
         damier.initialiser();
-        assertEquals("""
-                        -p-p-p-p-p
-                        p-p-p-p-p-
-                        -p-p-p-p-p
-                        p-p-p-p-p-
-                        ----------
-                        ----------
-                        -P-P-P-P-P
-                        P-P-P-P-P-
-                        -P-P-P-P-P
-                        P-P-P-P-P-
-                        """,
-                damier.getRepresentation()
-        );
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append("-p-p-p-p-p\n");
+        stringBuilder.append("p-p-p-p-p-\n");
+        stringBuilder.append("-p-p-p-p-p\n");
+        stringBuilder.append("p-p-p-p-p-\n");
+        stringBuilder.append("----------\n");
+        stringBuilder.append("----------\n");
+        stringBuilder.append("-P-P-P-P-P\n");
+        stringBuilder.append("P-P-P-P-P-\n");
+        stringBuilder.append("-P-P-P-P-P\n");
+        stringBuilder.append("P-P-P-P-P-\n");
+
+        assertEquals(stringBuilder.toString(), damier.getRepresentation());
 
         damier.retirerPion(5);
         damier.ajouterPion(5, new Dame(Dame.Couleur.Blanc));
@@ -541,19 +574,21 @@ public class TestDamier {
 
         damier.retirerPion(50);
         damier.ajouterPion(50, new Dame(Dame.Couleur.Noir));
-        assertEquals("""
-                        -d-p-p-p-d
-                        p-p-p-p-p-
-                        -p-p-p-p-p
-                        p-p-p-p-p-
-                        ----------
-                        ----------
-                        -P-P-P-P-P
-                        P-P-P-P-P-
-                        -P-P-P-P-P
-                        P-P-P-P-D-
-                        """,
-                damier.getRepresentation()
-        );
-    }*/
+
+        stringBuilder = new StringBuilder();
+
+        stringBuilder.append("-d-p-p-p-d\n");
+        stringBuilder.append("p-p-p-p-p-\n");
+        stringBuilder.append("-p-p-p-p-p\n");
+        stringBuilder.append("p-p-p-p-p-\n");
+        stringBuilder.append("----------\n");
+        stringBuilder.append("----------\n");
+        stringBuilder.append("-P-P-P-P-P\n");
+        stringBuilder.append("P-P-P-P-P-\n");
+        stringBuilder.append("-P-P-P-P-P\n");
+        stringBuilder.append("P-P-P-P-D-\n");
+
+        assertEquals(stringBuilder.toString(), damier.getRepresentation());
+
+    }
 }
