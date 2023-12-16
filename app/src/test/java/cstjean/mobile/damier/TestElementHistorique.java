@@ -67,4 +67,39 @@ public class TestElementHistorique {
 
     }
 
+    @Test
+    public void testPrintSingleMove() {
+
+        damier.ajouterPion(18, new Dame(Pion.Couleur.Blanc));
+
+        damier.vider();
+        damier.ajouterPion(18, new Dame(Pion.Couleur.Blanc));
+
+        damier.ajouterPion(23, new Dame(Pion.Couleur.Noir));
+        damier.ajouterPion(34, new Pion(Pion.Couleur.Noir));
+
+        damier.deplacerPion(18, 29);
+
+        assertEquals("18×29", ElementHistorique.getMouvementString(damier.
+                getElementsHistoriquesNewestToOldest().get(0)));
+
+        damier.deplacerPion(29, 40);
+
+        assertEquals("29×40", ElementHistorique.getMouvementString(damier.
+                getElementsHistoriquesNewestToOldest().get(0)));
+
+        // changement de tour
+        damier.vider();
+
+        damier.ajouterPion(1, new Pion(Pion.Couleur.Blanc));
+        damier.ajouterPion(50, new Pion(Pion.Couleur.Noir));
+        damier.deplacerPion(1, 6);
+
+
+        damier.deplacerPion(50, 45);
+        assertEquals("(50-45)", ElementHistorique.getMouvementString(damier.
+                getElementsHistoriquesNewestToOldest().get(0)));
+
+
+    }
 }
