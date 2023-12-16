@@ -21,6 +21,8 @@ public class ElementHistoriqueListAdapter extends RecyclerView.Adapter<ElementHi
 
     /**
      * Le constructeur.
+     *
+     * @param elementHistoriques les elements hisoriques.
      */
     public ElementHistoriqueListAdapter(List<ElementHistorique> elementHistoriques) {
         this.elementHistoriques = elementHistoriques;
@@ -28,9 +30,6 @@ public class ElementHistoriqueListAdapter extends RecyclerView.Adapter<ElementHi
 
     @NonNull
     @Override
-    /**
-     * Appelé lorsqu'on crée un ViewHolder.
-     */
     public ElementHistoriqueViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.item_element_historique, parent, false);
@@ -38,6 +37,7 @@ public class ElementHistoriqueListAdapter extends RecyclerView.Adapter<ElementHi
     }
 
     /**
+     *  Le binding de view holder.
      *
      * @param holder The ViewHolder which should be updated to represent the contents of the
      *        item at the given position in the data set.
@@ -54,7 +54,9 @@ public class ElementHistoriqueListAdapter extends RecyclerView.Adapter<ElementHi
 
     /**
      * Le nb d'items d'historique.
-     * @return
+     *
+     * @return le nb d'items.
+     *
      */
     @Override
     public int getItemCount() {
@@ -81,6 +83,7 @@ class ElementHistoriqueViewHolder extends RecyclerView.ViewHolder {
 
     /**
      * Éléments d'historique.
+     *
      * @param itemView le view visé.
      */
     public ElementHistoriqueViewHolder(@NonNull View itemView) {
@@ -99,7 +102,8 @@ class ElementHistoriqueViewHolder extends RecyclerView.ViewHolder {
      */
     void bindElementHistorique(ElementHistorique elementHistorique, Integer numeroMove) {
 
+        String numMove = numeroMove.toString();
         manouryTextView.setText(ElementHistorique.getMouvementString(elementHistorique));
-        positionTextView.setText(numeroMove.toString());
+        positionTextView.setText(numMove);
     }
 }

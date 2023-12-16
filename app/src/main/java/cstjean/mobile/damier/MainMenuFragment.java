@@ -18,8 +18,14 @@ import java.util.Objects;
  */
 public class MainMenuFragment extends Fragment {
 
-    private final String KEYNOMBLANC = "nom_blanc";
-    private final String KEYNOMNOIR = "nom_noir";
+    /**
+     * Le clé utilisé repris dans le fragment du joueur Blanc.
+     */
+    private final String keynomblanc = "nom_blanc";
+    /**
+     * Le clé utilisé repris dans le fragment du joueur Blanc.
+     */
+    private final String keynomnoir = "nom_noir";
 
     /**
      * Le texte pour écrire le nom du joueur blanc.
@@ -52,8 +58,8 @@ public class MainMenuFragment extends Fragment {
             nom2 = nom2.replace(" ", "");
             if (!TextUtils.isEmpty(nom1) && !TextUtils.isEmpty(nom2)) {
                 Intent intent = new Intent(getActivity(), DamierActivity.class);
-                intent.putExtra(KEYNOMBLANC, nom1);
-                intent.putExtra(KEYNOMNOIR, nom2);
+                intent.putExtra(keynomblanc, nom1);
+                intent.putExtra(keynomnoir, nom2);
                 startActivity(intent);
             }
         });

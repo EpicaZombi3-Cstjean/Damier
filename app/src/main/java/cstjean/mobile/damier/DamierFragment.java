@@ -30,20 +30,31 @@ public class DamierFragment extends Fragment {
      */
     private final Damier damier = Damier.getInstance();
 
-    private final String KEYNOMBLANC = "nom_blanc";
-    private final String KEYNOMNOIR = "nom_noir";
-
+    /**
+     * Le nom de joueur blanc.
+     */
     private static String nomJoueurBlanc = null;
+    /**
+     * Le nom de joueur Noir.
+     */
     private static String nomJoueurNoir = null;
+    /**
+     * La stack qui sert pour stocker l'historique.
+     */
     private final Stack<Integer> historiqueSelectedSlots = new Stack<>();
 
-
+    /**
+     * Le recyclerView de l'historique.
+     */
     private RecyclerView recyclerViewElementHistorique;
+    /**
+     * Le text view qui contient le nom du joueur en cours.
+     */
     private TextView textTourJoueur;
+    /**
+     * Le text view qui écrit le dernier tour joué.
+     */
     private TextView textLastMove;
-    private Button btn_back_reset;
-
-    private ElementHistoriqueListAdapter adapterElementHistorique;
 
     public Damier getDamier() {
         return damier;
@@ -68,8 +79,10 @@ public class DamierFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         if (nomJoueurBlanc == null && nomJoueurNoir == null) {
-            nomJoueurBlanc = getActivity().getIntent().getStringExtra(KEYNOMBLANC);
-            nomJoueurNoir = getActivity().getIntent().getStringExtra(KEYNOMNOIR);
+            String keynomblanc = "nom_blanc";
+            nomJoueurBlanc = requireActivity().getIntent().getStringExtra(keynomblanc);
+            String keynomnoir = "nom_noir";
+            nomJoueurNoir = requireActivity().getIntent().getStringExtra(keynomnoir);
         }
 
         placerCasesDamier(view);
@@ -78,7 +91,7 @@ public class DamierFragment extends Fragment {
 
         textLastMove = view.findViewById(R.id.text_lastMove);
 
-        btn_back_reset = view.findViewById(R.id.btn_back_reset);
+        Button btn_back_reset = view.findViewById(R.id.btn_back_reset);
         btn_back_reset.setOnClickListener(v -> {
 
             buttonRetourArrierePress(view);
@@ -323,7 +336,7 @@ public class DamierFragment extends Fragment {
         textTourJoueur.setText(stringBuilder.toString());
 
         List<ElementHistorique> elementsHistoriquesNewestToOldest = damier.getElementsHistoriquesNewestToOldest();
-        adapterElementHistorique = new ElementHistoriqueListAdapter(elementsHistoriquesNewestToOldest);
+        ElementHistoriqueListAdapter adapterElementHistorique = new ElementHistoriqueListAdapter(elementsHistoriquesNewestToOldest);
         recyclerViewElementHistorique.setAdapter(adapterElementHistorique);
 
         if (damier.getEtatPartie() != Damier.EtatPartie.EnCours) {
@@ -343,10 +356,10 @@ public class DamierFragment extends Fragment {
 
             Integer[] deplacementsPossibles;
 
-            if (damier.getPrisesFromHistorique(pion.getCouleur()).length == 0
-                    || damier.getPrisesFromHistorique(
-                            pion.getCouleur() == Pion.Couleur.Blanc
-                                    ? Pion.Couleur.Noir
+            if (damier.getPrisesFromHistorique(pion.getCouleur()).length == 0 ||
+                    damier.getPrisesFromHistorique(
+                            pion.getCouleur() == Pion.Couleur.Blanc ?
+                                    Pion.Couleur.Noir
                                     : Pion.Couleur.Blanc).length != 0) {
                 // déplacement (avec ou sans prise)
                 deplacementsPossibles = damier.getDeplacementsPossibles(position, false);
