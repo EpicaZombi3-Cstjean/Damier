@@ -21,6 +21,9 @@ public class Damier {
      */
     private int tourActuel = 1;
 
+    /**
+     * Crée un damier null.
+     */
     private static Damier damier = null;
 
     // should be private
@@ -44,6 +47,11 @@ public class Damier {
         initialiser();
     }
 
+    /**
+     * Permet d'obtenir l'instance du damier.
+     *
+     * @return l'instance du damier
+     */
     public static Damier getInstance() {
         if (damier == null) {
             damier = new Damier();
@@ -186,6 +194,7 @@ public class Damier {
 
     /**
      * Ce getter retourne un arraylist d'éléments d'historique.
+     *
      * @return un arraylist des éléments historique, triés du plus récent au plus ancien.
      */
     public ArrayList<ElementHistorique> getElementsHistoriquesNewestToOldest() {
@@ -214,6 +223,8 @@ public class Damier {
 
      * @param position int qui représente la position du pion.
      *
+     * @param doitEtrePrise utilisé pour la prise forcée.
+     *
      * @return un array de tous les déplcements possibles.
      */
     public Integer[] getDeplacementsPossibles(int position, boolean doitEtrePrise) {
@@ -239,9 +250,9 @@ public class Damier {
         // modifie une liste grâce à la référence des valeurs passés en objets.
         regarderPrises(listeDePrises, new Integer[0], position, pionJoueur, dernieresPrises);
 
-        boolean aAutresPionsPlusDePrises = aAutrePionPlusDePrises(pionJoueur, position, listeDePrises);
+        boolean autrePionPlusDePrises = autrePionPlusDePrises(pionJoueur, position, listeDePrises);
 
-        if (aAutresPionsPlusDePrises && !doitEtrePrise) {
+        if (autrePionPlusDePrises && !doitEtrePrise) {
             return deplacementsPossibles;
         }
 
@@ -259,10 +270,9 @@ public class Damier {
         return deplacementsPossibles;
     }
 
-
     /**
      * Obtient les déplacements possibles dans le cas où il n'y aurait pas de prise.
-
+     *
      * @param position la position du pion du joueur.
      * @param pionJoueur le pion du joueur.
      * @return Un array d'Integer des déplacements possibles.
@@ -365,7 +375,8 @@ public class Damier {
 
      * @param position la position qui sert à calculer les positions. // (p-t inutile en ce cas) // TODO
      * @param listeDePrises la liste de prise.
-     * @return
+     *
+     * @return la longueur de la plus grande prise.
      */
     public int longueurPlusGrandePrise(int position, ArrayList<Integer[]> listeDePrises) {
 
@@ -394,15 +405,15 @@ public class Damier {
     }
 
     /**
-     * Regarde tous les pions, s'il y en a un qui peut jouer plus de prises que le pion sélectionné
+     * Regarde tous les pions, s'il y en a un qui peut jouer plus de prises que le pion sélectionné.
 
-     * @param pionJoueur
-     * @param positionJoueur
-     * @param listeDePrises
-     * @return
+     * @param pionJoueur le pion du joueur.
+     * @param positionJoueur la position du pion
+     * @param listeDePrises la liste des prises
+     * @return si le pion a plus de prise
      */
-    private boolean aAutrePionPlusDePrises(Pion pionJoueur, int positionJoueur,
-                                           ArrayList<Integer[]> listeDePrises ) {
+    private boolean autrePionPlusDePrises(Pion pionJoueur, int positionJoueur,
+                                          ArrayList<Integer[]> listeDePrises) {
         /* Force la plus grande prise */
         HashMap<Integer, Pion> pionsCouleur = getPions(pionJoueur.getCouleur());
 
@@ -469,9 +480,8 @@ public class Damier {
                         // le nouvel array
                         Integer[] neoPrisesActuelles = new Integer[prisesActuelle.length + 1];
 
-                        for (int i = 0; i < prisesActuelle.length; i++) {
-                            neoPrisesActuelles[i] = prisesActuelle[i];
-                        }
+                        System.arraycopy(prisesActuelle, 0, neoPrisesActuelles,
+                                0, prisesActuelle.length);
                         neoPrisesActuelles[neoPrisesActuelles.length - 1] = nextPos;
 
                         // ajout du nouvel array dans la liste.
@@ -510,9 +520,8 @@ public class Damier {
 
                             // le nouvel array
                             Integer[] neoPrisesActuelles = new Integer[prisesActuelle.length + 1];
-                            for (int i = 0; i < prisesActuelle.length; i++) {
-                                neoPrisesActuelles[i] = prisesActuelle[i];
-                            }
+                            System.arraycopy(prisesActuelle, 0, neoPrisesActuelles,
+                                    0, prisesActuelle.length);
                             neoPrisesActuelles[neoPrisesActuelles.length - 1] = nextPos;
 
                             // ajout du nouvel array dans la liste.
@@ -804,8 +813,6 @@ public class Damier {
 
         HashMap<Integer, Pion> pionsCouleur = getPions(getTourJoueur());
 
-        HashMap<Integer, Pion> pions = getPions();
-
         if (pionsCouleur.isEmpty()) {
 
             if (getTourJoueur() == Pion.Couleur.Blanc) {
@@ -826,8 +833,8 @@ public class Damier {
             int key = entry.getKey(); // position
             Pion pion = entry.getValue(); // pion
 
-            if (pion != null
-                    && getDeplacementsPossibles(key, false).length > 0) {
+            if (pion != null &&
+                    getDeplacementsPossibles(key, false).length > 0) {
 
                 joueurPeutJouer = true;
             }
@@ -1004,6 +1011,13 @@ public class Damier {
         }
     }
 
+    /**
+     * Utilisé pour obtenir la couleur inverse du pion choisi.
+     *
+     * @param couleur la couleur du pion.
+     *
+     * @return la couleur inverse du pion
+     */
     public static Pion.Couleur getCouleurInverse(Pion.Couleur couleur) {
 
         return couleur == Pion.Couleur.Blanc ? Pion.Couleur.Noir : Pion.Couleur.Blanc;
