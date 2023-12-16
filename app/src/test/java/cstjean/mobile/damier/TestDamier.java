@@ -422,7 +422,6 @@ public class TestDamier {
         assertEquals(0, damier.getDeplacementsPossibles(50, false).length);
         damier.getDeplacementsPossibles(51, true);
 
-
     }
 
     /**
