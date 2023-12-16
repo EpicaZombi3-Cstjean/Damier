@@ -38,6 +38,9 @@ public class MainMenuFragment extends Fragment {
      */
     private TextInputEditText texteJoueur2;
 
+    /**
+     * Le bouton pour commencer la partie.
+     */
     private Button boutonCommencer;
 
     @Override
@@ -96,13 +99,9 @@ public class MainMenuFragment extends Fragment {
     }
 
     private void update() {
-
-        String temp1 = preparerNom(texteJoueur1.getText().toString());
-        String temp2 = preparerNom(texteJoueur2.getText().toString());
-
         boutonCommencer.setEnabled(
-            preparerNom(texteJoueur1.getText().toString()).length() > 0 &&
-            preparerNom(texteJoueur2.getText().toString()).length() > 0
+            preparerNom(Objects.requireNonNull(texteJoueur1.getText()).toString()).length() > 0 &&
+            preparerNom(Objects.requireNonNull(texteJoueur2.getText()).toString()).length() > 0
         );
 
     }
