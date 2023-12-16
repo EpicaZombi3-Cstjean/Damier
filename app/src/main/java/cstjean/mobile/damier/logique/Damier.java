@@ -730,80 +730,92 @@ public class Damier {
         boolean hasPosition = estPositionDansArray(positionFinale, deplacementsPossibles);
         if (hasPosition) {
             // c'est en ce moment-ci que le "déplacement" du pion se fait
-
-            ajouterPion(positionFinale, pionJoueur);
-
-            // regarde s'il y a eu une prise lors de ce tours-ci
-            int positionPrise = prochaineCase(positionFinale, calculateDirection(positionFinale, positionInitiale));
-            if (findPion(positionPrise) == null || findPion(positionPrise).getCouleur() == pionJoueur.getCouleur()) {
-                positionPrise = -1;
-            }
-
-            ElementHistorique newElement = new ElementHistorique(
-                    positionInitiale,
-                    positionFinale,
-                    pionJoueur.getCouleur(),
-                    positionPrise,
-                    false, // sera changé plus tard si c'est le cas
-                    positionPrise != -1 && findPion(positionPrise).estDame()
-            );
-
-            historique.push(newElement);
-
-            Integer[] deplacementsPossiblesViaPosFinale = getDeplacementsPossibles(positionFinale, true);
-
-            if (deplacementsPossiblesViaPosFinale.length == 0 || historique.peek().getPositionPrise() == -1) {
-                /* FIN DE TOUR!!!!! */
-
-                boolean transformationEnDame; // faux par défaut.
-
-                // regarde si le pion peut se transformer en dame
-                // si !pionJoueur.estDame et (pion noir à la row 1 ou pion blanc à la row 10)
-                transformationEnDame = !pionJoueur.estDame() &&
-                        (
-                                (getRow(positionFinale) == 1 && pionJoueur.getCouleur() == Pion.Couleur.Noir) ||
-                                (getRow(positionFinale) == 10 && pionJoueur.getCouleur() == Pion.Couleur.Blanc)
-                        );
-
-                if (transformationEnDame) {
-                    pionJoueur = new Dame(pionJoueur.getCouleur());
-                    retirerPion(positionFinale);
-                    ajouterPion(positionFinale, pionJoueur);
-
-                    newElement = new ElementHistorique(newElement.getPositionInitiale(),
-                            newElement.getPositionFinale(),
-                            newElement.getCouleur(),
-                            newElement.getPositionPrise(),
-                            true,
-                            positionPrise != -1 && findPion(positionPrise).estDame()
-                    );
-                    historique.pop();
-                    historique.push(newElement);
-                }
-
-                Integer[] prisesEffectuees = getPrisesFromHistorique(pionJoueur.getCouleur());
-
-                // le nettoyage final (enlève les pions pris.)
-                for (Integer posPrise : prisesEffectuees) {
-                    if (posPrise != -1 && findPion(posPrise) != null &&
-                            findPion(posPrise).getCouleur() != pionJoueur.getCouleur()) {
-                        retirerPion(posPrise); // retire tous les pions qui ont étés pris dans la prise.
-                    }
-                }
-
-                tourActuel = tourActuel + 1;
-
-                verifierSiPartieTerminee();
-
-            }
-            // sinon, le joueur peut rejouer, donc la transformation en dame
-            //      devrait être impossible. donc on ne la modifie pas.
-
-            retirerPion(positionInitiale);
+            // donc la fonction logiqueDeplacementPion est appelée :D
+            logiqueDeplacementPion(positionInitiale, positionFinale, pionJoueur);
         } else {
             throw new IllegalArgumentException();
         }
 
+    }
+
+    /**
+     * Contient la logique de déplacement. Sert surtout à séparer le gros surplus
+     * de logique qui était contenu dans la fonction deplacerPion (100 lignes, voire plus)
+     * en de plus petits morceaux
+
+     * @param positionInitiale la position initiale du joueur
+     * @param positionFinale la position finale du joueur
+     * @param pionJoueur le pion en question.
+     */
+    private void logiqueDeplacementPion(int positionInitiale, int positionFinale, Pion pionJoueur) {
+        ajouterPion(positionFinale, pionJoueur);
+        // regarde s'il y a eu une prise lors de ce tours-ci
+        int positionPrise = prochaineCase(positionFinale, calculateDirection(positionFinale, positionInitiale));
+        if (findPion(positionPrise) == null || findPion(positionPrise).getCouleur() == pionJoueur.getCouleur()) {
+            positionPrise = -1;
+        }
+
+        ElementHistorique newElement = new ElementHistorique(
+                positionInitiale,
+                positionFinale,
+                pionJoueur.getCouleur(),
+                positionPrise,
+                false, // sera changé plus tard si c'est le cas
+                positionPrise != -1 && findPion(positionPrise).estDame()
+        );
+
+        historique.push(newElement);
+
+        Integer[] deplacementsPossiblesViaPosFinale = getDeplacementsPossibles(positionFinale, true);
+
+        if (deplacementsPossiblesViaPosFinale.length == 0 || historique.peek().getPositionPrise() == -1) {
+            /* FIN DE TOUR!!!!! */
+
+            boolean transformationEnDame; // faux par défaut.
+
+            // regarde si le pion peut se transformer en dame
+            // si !pionJoueur.estDame et (pion noir à la row 1 ou pion blanc à la row 10)
+            transformationEnDame = !pionJoueur.estDame() &&
+                    (
+                            (getRow(positionFinale) == 1 && pionJoueur.getCouleur() == Pion.Couleur.Noir) ||
+                                    (getRow(positionFinale) == 10 && pionJoueur.getCouleur() == Pion.Couleur.Blanc)
+                    );
+
+            if (transformationEnDame) {
+                pionJoueur = new Dame(pionJoueur.getCouleur());
+                retirerPion(positionFinale);
+                ajouterPion(positionFinale, pionJoueur);
+
+                newElement = new ElementHistorique(newElement.getPositionInitiale(),
+                        newElement.getPositionFinale(),
+                        newElement.getCouleur(),
+                        newElement.getPositionPrise(),
+                        true,
+                        positionPrise != -1 && findPion(positionPrise).estDame()
+                );
+                historique.pop();
+                historique.push(newElement);
+            }
+
+            Integer[] prisesEffectuees = getPrisesFromHistorique(pionJoueur.getCouleur());
+
+            // le nettoyage final (enlève les pions pris.)
+            for (Integer posPrise : prisesEffectuees) {
+                if (posPrise != -1 && findPion(posPrise) != null &&
+                        findPion(posPrise).getCouleur() != pionJoueur.getCouleur()) {
+                    retirerPion(posPrise); // retire tous les pions qui ont étés pris dans la prise.
+                }
+            }
+
+            tourActuel = tourActuel + 1;
+
+            verifierSiPartieTerminee();
+
+        }
+        // sinon, le joueur peut rejouer, donc la transformation en dame
+        //      devrait être impossible. donc on ne la modifie pas.
+
+        retirerPion(positionInitiale);
     }
 
     /**
