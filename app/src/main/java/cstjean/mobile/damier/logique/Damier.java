@@ -41,7 +41,7 @@ public class Damier {
      */
     private Damier() {
         this.etatPartie = EtatPartie.EnCours;
-        initialiser();
+        initialisertemp2();
     }
 
     public static Damier getInstance() {

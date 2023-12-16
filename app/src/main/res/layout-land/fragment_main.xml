@@ -30,44 +30,48 @@
         android:layout_height="wrap_content"
         android:text="(11x11)"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/grille"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/grille"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.89" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_tour_joueur"
+        app:layout_constraintVertical_bias="0.100000024" />
 
     <Button
         android:id="@+id/btn_back_reset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Retour à l'arrière"
+        android:textColorHighlight="#673AB7"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/grille"
+        app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/grille"
-        app:layout_constraintVertical_bias="0.19999999" />
+        app:layout_constraintTop_toBottomOf="@+id/text_lastMove"
+        app:layout_constraintVertical_bias="0.75" />
 
     <TextView
         android:id="@+id/txt_tour_joueur"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Egg"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/text_lastMove"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/grille"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.95" />
+        app:layout_constraintVertical_bias="0.100000024" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/historique_mouvements"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/btn_back_reset"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="20dp"
-        />
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/grille"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.576" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

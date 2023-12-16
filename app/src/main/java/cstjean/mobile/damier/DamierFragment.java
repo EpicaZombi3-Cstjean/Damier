@@ -1,6 +1,7 @@
 package cstjean.mobile.damier;
 
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +57,8 @@ public class DamierFragment extends Fragment {
      */
     private TextView textLastMove;
 
+    private Button bouton_back_reset;
+
     public Damier getDamier() {
         return damier;
     }
@@ -78,12 +81,10 @@ public class DamierFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        if (nomJoueurBlanc == null && nomJoueurNoir == null) {
-            String keynomblanc = "nom_blanc";
-            nomJoueurBlanc = requireActivity().getIntent().getStringExtra(keynomblanc);
-            String keynomnoir = "nom_noir";
-            nomJoueurNoir = requireActivity().getIntent().getStringExtra(keynomnoir);
-        }
+        String keynomblanc = "nom_blanc";
+        nomJoueurBlanc = requireActivity().getIntent().getStringExtra(keynomblanc);
+        String keynomnoir = "nom_noir";
+        nomJoueurNoir = requireActivity().getIntent().getStringExtra(keynomnoir);
 
         placerCasesDamier(view);
 
@@ -91,8 +92,9 @@ public class DamierFragment extends Fragment {
 
         textLastMove = view.findViewById(R.id.text_lastMove);
 
-        Button btn_back_reset = view.findViewById(R.id.btn_back_reset);
-        btn_back_reset.setOnClickListener(v -> {
+
+        bouton_back_reset = view.findViewById(R.id.btn_back_reset);
+        bouton_back_reset.setOnClickListener(v -> {
 
             buttonRetourArrierePress(view);
 
@@ -119,7 +121,7 @@ public class DamierFragment extends Fragment {
 
             if (getResources().getConfiguration().orientation ==
                     Configuration.ORIENTATION_LANDSCAPE) {
-                buttonSize = 75;
+                buttonSize = 90;
             } else {
                 buttonSize = 100;
             }
@@ -174,19 +176,25 @@ public class DamierFragment extends Fragment {
 
             btnPressModeSelected(position);
             updateInterface(view);
-        } else {}
+        }
     }
 
     private void buttonRetourArrierePress(View view) {
-        if (!historiqueSelectedSlots.isEmpty()) {
+        if (damier.getEtatPartie() != Damier.EtatPartie.EnCours) {
+
+            damier.vider();
+            damier.initialiser();
+            historiqueSelectedSlots.empty();
+            getActivity().finish();
+
+        } else if (!historiqueSelectedSlots.isEmpty()) {
 
             selectedSlot = historiqueSelectedSlots.pop();
             interfaceState = InterfaceState.Selected;
+            damier.retourArriere();
         }
 
-        damier.retourArriere();
         updateInterface(view);
-
     }
     private void btnPressModeShowOnly(int position) {
         Pion pion = damier.findPion(position);
@@ -342,6 +350,15 @@ public class DamierFragment extends Fragment {
         if (damier.getEtatPartie() != Damier.EtatPartie.EnCours) {
             interfaceState = InterfaceState.GameOver;
         }
+
+        if (interfaceState == InterfaceState.GameOver) {
+            bouton_back_reset.setText("Rénitialiser");
+            bouton_back_reset.setBackgroundColor(Color.rgb(244, 67, 54));
+        } else {
+            bouton_back_reset.setText("Retour à Arrière");
+            bouton_back_reset.setBackgroundColor(Color.rgb(103, 58, 183));
+        }
+
     }
 
     /**

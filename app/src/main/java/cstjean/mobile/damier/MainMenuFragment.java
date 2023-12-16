@@ -51,8 +51,8 @@ public class MainMenuFragment extends Fragment {
         Button commencer = view.findViewById(R.id.btn_jouer);
 
         commencer.setOnClickListener(v -> {
-            String nom1 = (Objects.requireNonNull(joueur1.getText())).toString();
-            String nom2 = (Objects.requireNonNull(joueur2.getText())).toString();
+            String nom1 = retirerSautsDeLigne( (Objects.requireNonNull(joueur1.getText())).toString() );
+            String nom2 = retirerSautsDeLigne( (Objects.requireNonNull(joueur2.getText())).toString() );
 
             nom1 = nom1.replace(" ", "");
             nom2 = nom2.replace(" ", "");
@@ -65,5 +65,15 @@ public class MainMenuFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private String retirerSautsDeLigne(String str) {
+        StringBuilder futureStringBuilder = new StringBuilder();
+        for (int i = 0; i <str.length(); i++) {
+            if (str.charAt(i) != '\n') {
+                futureStringBuilder.append(str.charAt(i));
+            }
+        }
+        return futureStringBuilder.toString();
     }
 }
