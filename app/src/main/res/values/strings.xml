@@ -5,4 +5,6 @@
     <string name="txt_joueur1">Nom du joueur 1</string>
     <string name="txt_joueur2">Nom de joueur 2</string>
     <string name="btn_jouer">Commencer une nouvelle partie</string>
+    <string name="renitialiser">Rénitialiser</string>
+    <string name="retour_arriere">Retour à Arrière</string>
 </resources>

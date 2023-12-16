@@ -41,7 +41,7 @@ public class Damier {
      */
     private Damier() {
         this.etatPartie = EtatPartie.EnCours;
-        initialisertemp2();
+        initialiser();
     }
 
     public static Damier getInstance() {
@@ -179,28 +179,6 @@ public class Damier {
         for (int i = 31; i <= 50; i++) {
             ajouterPion(i, new Pion(Pion.Couleur.Noir));
         }
-        tourActuel = 1;
-        historique.clear();
-        etatPartie = EtatPartie.EnCours;
-    }
-
-    /**
-     // TODO REMOVE SOON!!!
-     * Aura servi à régler un problème qui empêchait le forçage de la plus grande prise.
-     */
-    public void initialisertemp2() {
-
-        ajouterPion(1, new Pion(Pion.Couleur.Blanc));
-        ajouterPion(5, new Pion(Pion.Couleur.Blanc));
-
-        ajouterPion(7, new Pion(Pion.Couleur.Noir));
-        ajouterPion(10, new Pion(Pion.Couleur.Noir));
-        ajouterPion(19, new Pion(Pion.Couleur.Noir));
-
-        ajouterPion(50, new Pion(Pion.Couleur.Blanc));
-        ajouterPion(44, new Pion(Pion.Couleur.Noir));
-        ajouterPion(33, new Pion(Pion.Couleur.Noir));
-
         tourActuel = 1;
         historique.clear();
         etatPartie = EtatPartie.EnCours;

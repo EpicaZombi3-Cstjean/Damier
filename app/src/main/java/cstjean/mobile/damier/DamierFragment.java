@@ -57,17 +57,26 @@ public class DamierFragment extends Fragment {
      */
     private TextView textLastMove;
 
-    private Button bouton_back_reset;
+    /**
+     * Le bouton pour revenir en arrière.
+     */
+    private Button boutonBackReset;
 
     public Damier getDamier() {
         return damier;
     }
+
     /**
      * Le ID des boutons, nous permettant de continuer à les utiliser.
      */
-    int[] buttonIDs = new int[50];
-
+    private final int[] buttonids = new int[50];
+    /**
+     * Montre à quelle état de l'interface on est.
+     */
     private InterfaceState interfaceState = InterfaceState.ShowOnly;
+    /**
+     * Utilisé pour quand le joueur clique sur une case.
+     */
     private int selectedSlot = 0;
 
     @Override
@@ -92,13 +101,9 @@ public class DamierFragment extends Fragment {
 
         textLastMove = view.findViewById(R.id.text_lastMove);
 
-
-        bouton_back_reset = view.findViewById(R.id.btn_back_reset);
-        bouton_back_reset.setOnClickListener(v -> {
-
-            buttonRetourArrierePress(view);
-
-        }); // Note : je ne connais pas les lambdas.
+        boutonBackReset = view.findViewById(R.id.btn_back_reset);
+        boutonBackReset.setOnClickListener(v -> buttonRetourArrierePress(view));
+        // Note : je ne connais pas les lambdas.
 
         recyclerViewElementHistorique = view.findViewById(R.id.historique_mouvements);
         recyclerViewElementHistorique.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -107,7 +112,12 @@ public class DamierFragment extends Fragment {
         return view;
     }
 
-
+    /**
+     * Place toutes les cases dynamiquements.
+     *
+     * @param view la view.
+     *
+     */
     private void placerCasesDamier(View view) {
 
         GridLayout gridLayout = view.findViewById(R.id.grille);
@@ -134,15 +144,16 @@ public class DamierFragment extends Fragment {
 
             // Setup du bouton.
             bouton.setLayoutParams(params);
-            bouton.setOnClickListener(v -> buttonPress(finalI, view)); // Note : je ne connais pas les lambdas.
+            bouton.setOnClickListener(v -> buttonPress(finalI, view));
+            // Note : je ne connais pas les lambdas.
 
             bouton.setScaleType(ImageView.ScaleType.FIT_XY);
             bouton.setPadding(5, 5, 5, 5);
 
             // Ajout de l'ID pour le bouton.
-            int btn_id = View.generateViewId();
-            buttonIDs[i - 1] = btn_id;
-            bouton.setId(btn_id);
+            int btnId = View.generateViewId();
+            buttonids[i - 1] = btnId;
+            bouton.setId(btnId);
             bouton.setBackgroundResource(R.mipmap.ic_case_dark_grey);
 
             // Image servant à placer la case blanche située dans la paire (car une position = 2 cases).
@@ -185,7 +196,7 @@ public class DamierFragment extends Fragment {
             damier.vider();
             damier.initialiser();
             historiqueSelectedSlots.empty();
-            getActivity().finish();
+            requireActivity().finish();
 
         } else if (!historiqueSelectedSlots.isEmpty()) {
 
@@ -196,6 +207,12 @@ public class DamierFragment extends Fragment {
 
         updateInterface(view);
     }
+
+    /**
+     * Détermine les mouvements d'un pion après être pressé.
+     *
+     * @param position la position du bouton pressé.
+     */
     private void btnPressModeShowOnly(int position) {
         Pion pion = damier.findPion(position);
 
@@ -203,10 +220,10 @@ public class DamierFragment extends Fragment {
 
             Integer[] deplacementsPossibles;
 
-            if (damier.getPrisesFromHistorique(pion.getCouleur()).length == 0
-                    || damier.getPrisesFromHistorique(
-                    pion.getCouleur() == Pion.Couleur.Blanc
-                            ? Pion.Couleur.Noir
+            if (damier.getPrisesFromHistorique(pion.getCouleur()).length == 0 ||
+                    damier.getPrisesFromHistorique(
+                    pion.getCouleur() == Pion.Couleur.Blanc ?
+                            Pion.Couleur.Noir
                             : Pion.Couleur.Blanc).length != 0) {
 
                 deplacementsPossibles = damier.getDeplacementsPossibles(position, false);
@@ -233,10 +250,10 @@ public class DamierFragment extends Fragment {
 
             Integer[] deplacementsPossibles;
 
-            if (damier.getPrisesFromHistorique(pion.getCouleur()).length == 0
-                    || damier.getPrisesFromHistorique(
-                    pion.getCouleur() == Pion.Couleur.Blanc
-                            ? Pion.Couleur.Noir
+            if (damier.getPrisesFromHistorique(pion.getCouleur()).length == 0 ||
+                    damier.getPrisesFromHistorique(
+                    pion.getCouleur() == Pion.Couleur.Blanc ?
+                            Pion.Couleur.Noir
                             : Pion.Couleur.Blanc).length != 0) {
 
                 deplacementsPossibles = damier.getDeplacementsPossibles(selectedSlot, false);
@@ -255,8 +272,8 @@ public class DamierFragment extends Fragment {
                 damier.deplacerPion(selectedSlot, position);
                 historiqueSelectedSlots.push(selectedSlot);
 
-                if (damier.getDeplacementsPossibles(position, true).length > 0
-                    && damier.findPion(position).getCouleur() == damier.getTourJoueur()
+                if (damier.getDeplacementsPossibles(position, true).length > 0 &&
+                        damier.findPion(position).getCouleur() == damier.getTourJoueur()
                 ) {
 
                     selectedSlot = position;
@@ -282,11 +299,16 @@ public class DamierFragment extends Fragment {
         }
     }
 
+    /**
+     * Update l'interface selon le damier à chaque appel.
+     *
+     * @param view la view du damier
+     */
     public void updateInterface(View view) {
 
-        for(int i = 1; i <= buttonIDs.length; i++) {
+        for (int i = 1; i <= buttonids.length; i++) {
 
-            ImageButton btn = view.findViewById(buttonIDs[i - 1]);
+            ImageButton btn = view.findViewById(buttonids[i - 1]);
 
             btn.setBackgroundResource(R.mipmap.ic_case_dark_grey);
 
@@ -330,21 +352,21 @@ public class DamierFragment extends Fragment {
 
         textLastMove.setText(ElementHistorique.getHistoriqueTour(damier));
 
-        StringBuilder stringBuilder = new StringBuilder(50);
+        String str = (damier.getEtatPartie() == Damier.EtatPartie.EnCours ?
+                "Joueur actuel: " : "Vainqueur: ") +
+                (damier.getTourJoueur() == Pion.Couleur.Blanc ?
+                        damier.getEtatPartie() == Damier.EtatPartie.EnCours ? nomJoueurBlanc :
+                                nomJoueurNoir
+                        :
+                        damier.getEtatPartie() == Damier.EtatPartie.EnCours ? nomJoueurNoir :
+                                nomJoueurBlanc);
 
-        stringBuilder.append(damier.getEtatPartie() == Damier.EtatPartie.EnCours ?
-                "Joueur actuel: " : "Vainqueur: ");
+        textTourJoueur.setText(str);
 
-        stringBuilder.append(damier.getTourJoueur() == Pion.Couleur.Blanc ?
-                damier.getEtatPartie() == Damier.EtatPartie.EnCours ? nomJoueurBlanc : nomJoueurNoir
-                :
-                damier.getEtatPartie() == Damier.EtatPartie.EnCours ? nomJoueurNoir : nomJoueurBlanc
-        );
-
-        textTourJoueur.setText(stringBuilder.toString());
-
-        List<ElementHistorique> elementsHistoriquesNewestToOldest = damier.getElementsHistoriquesNewestToOldest();
-        ElementHistoriqueListAdapter adapterElementHistorique = new ElementHistoriqueListAdapter(elementsHistoriquesNewestToOldest);
+        List<ElementHistorique> elementsHistoriquesNewestToOldest =
+                damier.getElementsHistoriquesNewestToOldest();
+        ElementHistoriqueListAdapter adapterElementHistorique =
+                new ElementHistoriqueListAdapter(elementsHistoriquesNewestToOldest);
         recyclerViewElementHistorique.setAdapter(adapterElementHistorique);
 
         if (damier.getEtatPartie() != Damier.EtatPartie.EnCours) {
@@ -352,11 +374,11 @@ public class DamierFragment extends Fragment {
         }
 
         if (interfaceState == InterfaceState.GameOver) {
-            bouton_back_reset.setText("Rénitialiser");
-            bouton_back_reset.setBackgroundColor(Color.rgb(244, 67, 54));
+            boutonBackReset.setText(R.string.renitialiser);
+            boutonBackReset.setBackgroundColor(Color.rgb(244, 67, 54));
         } else {
-            bouton_back_reset.setText("Retour à Arrière");
-            bouton_back_reset.setBackgroundColor(Color.rgb(103, 58, 183));
+            boutonBackReset.setText(R.string.retour_arriere);
+            boutonBackReset.setBackgroundColor(Color.rgb(103, 58, 183));
         }
 
     }
@@ -387,17 +409,17 @@ public class DamierFragment extends Fragment {
 
                 Integer[] dernierePrise = damier.getPrisesFromHistorique(pion.getCouleur());
 
-                for (int i = 0; i < dernierePrise.length; i++) {
-                    ImageButton pr = view.findViewById(buttonIDs[dernierePrise[i] - 1]);
+                for (Integer integer : dernierePrise) {
+                    ImageButton pr = view.findViewById(buttonids[integer - 1]);
                     pr.setBackgroundResource(R.mipmap.ic_case_prise);
                 }
 
             }
 
-            for (int i = 0; i < deplacementsPossibles.length; i++) {
-                if (deplacementsPossibles[i] - 1 >= 0 && deplacementsPossibles[i] - 1 <= 50) {
+            for (Integer deplacementsPossible : deplacementsPossibles) {
+                if (deplacementsPossible - 1 >= 0 && deplacementsPossible - 1 <= 50) {
 
-                    ImageButton button = view.findViewById(buttonIDs[deplacementsPossibles[i] - 1]);
+                    ImageButton button = view.findViewById(buttonids[deplacementsPossible - 1]);
 
                     button.setBackgroundResource(R.mipmap.ic_case_deplacement_possible);
 
@@ -405,7 +427,7 @@ public class DamierFragment extends Fragment {
 
             }
 
-            ImageButton buttonPressed = view.findViewById(buttonIDs[position - 1]);
+            ImageButton buttonPressed = view.findViewById(buttonids[position - 1]);
 
             buttonPressed.setBackgroundResource(R.mipmap.ic_case_selectionnee);
         }
@@ -413,11 +435,20 @@ public class DamierFragment extends Fragment {
     }
 
     /**
-     *
+     * Les différents états de la partie.
      */
     private enum InterfaceState {
+        /**
+         * On ne sélectionne aucune pièce.
+         */
         ShowOnly,
+        /**
+         * On sélectionne une pièce.
+         */
         Selected,
+        /**
+         * La partie est terminée.
+         */
         GameOver
     }
 }
