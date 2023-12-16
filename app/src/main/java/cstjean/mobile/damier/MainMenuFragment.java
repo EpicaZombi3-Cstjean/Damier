@@ -51,11 +51,9 @@ public class MainMenuFragment extends Fragment {
         Button commencer = view.findViewById(R.id.btn_jouer);
 
         commencer.setOnClickListener(v -> {
-            String nom1 = retirerSautsDeLigne( (Objects.requireNonNull(joueur1.getText())).toString() );
-            String nom2 = retirerSautsDeLigne( (Objects.requireNonNull(joueur2.getText())).toString() );
+            String nom1 = preparerNom( (Objects.requireNonNull(joueur1.getText())).toString() );
+            String nom2 = preparerNom( (Objects.requireNonNull(joueur2.getText())).toString() );
 
-            nom1 = nom1.replace(" ", "");
-            nom2 = nom2.replace(" ", "");
             if (!TextUtils.isEmpty(nom1) && !TextUtils.isEmpty(nom2)) {
                 Intent intent = new Intent(getActivity(), DamierActivity.class);
                 intent.putExtra(keynomblanc, nom1);
@@ -67,9 +65,25 @@ public class MainMenuFragment extends Fragment {
         return view;
     }
 
-    private String retirerSautsDeLigne(String str) {
+    private String preparerNom(String str) {
+
+        int beginningWords = 0, endWords = str.length() - 1;
+
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) != ' ' && str.charAt(i) != '\n') {
+                beginningWords = i;
+                break;
+            }
+        }
+        for (int i = str.length() - 1; i >= 0; i--) {
+            if (str.charAt(i) != ' ' && str.charAt(i) != '\n') {
+                endWords = i;
+                break;
+            }
+        }
+
         StringBuilder futureStringBuilder = new StringBuilder();
-        for (int i = 0; i <str.length(); i++) {
+        for (int i = beginningWords; i <= endWords; i++) {
             if (str.charAt(i) != '\n') {
                 futureStringBuilder.append(str.charAt(i));
             }
