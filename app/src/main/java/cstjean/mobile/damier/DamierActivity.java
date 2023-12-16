@@ -1,10 +1,11 @@
 package cstjean.mobile.damier;
 
+import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
-import android.os.Bundle;
-
+/**
+ * l'activity du damier.
+ */
 public class DamierActivity extends AppCompatActivity {
 
     @Override

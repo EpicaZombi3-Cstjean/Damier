@@ -27,7 +27,7 @@ import java.util.Stack;
 public class DamierFragment extends Fragment {
 
     /**
-     * Le damier utilisé. // TODO UTILIER UN SINGLETON?
+     * Le damier utilisé.
      */
     private final Damier damier = Damier.getInstance();
 

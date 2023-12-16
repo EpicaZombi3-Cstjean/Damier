@@ -51,8 +51,8 @@ public class MainMenuFragment extends Fragment {
         Button commencer = view.findViewById(R.id.btn_jouer);
 
         commencer.setOnClickListener(v -> {
-            String nom1 = preparerNom( (Objects.requireNonNull(joueur1.getText())).toString() );
-            String nom2 = preparerNom( (Objects.requireNonNull(joueur2.getText())).toString() );
+            String nom1 = preparerNom((Objects.requireNonNull(joueur1.getText())).toString());
+            String nom2 = preparerNom((Objects.requireNonNull(joueur2.getText())).toString());
 
             if (!TextUtils.isEmpty(nom1) && !TextUtils.isEmpty(nom2)) {
                 Intent intent = new Intent(getActivity(), DamierActivity.class);
@@ -67,7 +67,8 @@ public class MainMenuFragment extends Fragment {
 
     private String preparerNom(String str) {
 
-        int beginningWords = 0, endWords = str.length() - 1;
+        int beginningWords = 0;
+        int endWords = str.length() - 1;
 
         for (int i = 0; i < str.length(); i++) {
             if (str.charAt(i) != ' ' && str.charAt(i) != '\n') {
