@@ -2,7 +2,9 @@ package cstjean.mobile.damier;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,11 +32,13 @@ public class MainMenuFragment extends Fragment {
     /**
      * Le texte pour écrire le nom du joueur blanc.
      */
-    private TextInputEditText joueur1;
+    private TextInputEditText texteJoueur1;
     /**
      * Le texte pour écrire le nom du joueur noir.
      */
-    private TextInputEditText joueur2;
+    private TextInputEditText texteJoueur2;
+
+    private Button boutonCommencer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,13 +50,37 @@ public class MainMenuFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main_menu, container, false);
 
-        joueur1 = view.findViewById(R.id.text_joueur1);
-        joueur2 = view.findViewById(R.id.text_joueur2);
-        Button commencer = view.findViewById(R.id.btn_jouer);
+        texteJoueur1 = view.findViewById(R.id.text_joueur1);
+        texteJoueur2 = view.findViewById(R.id.text_joueur2);
+        boutonCommencer = view.findViewById(R.id.btn_jouer);
 
-        commencer.setOnClickListener(v -> {
-            String nom1 = preparerNom((Objects.requireNonNull(joueur1.getText())).toString());
-            String nom2 = preparerNom((Objects.requireNonNull(joueur2.getText())).toString());
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                update();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        };
+
+        texteJoueur1.addTextChangedListener(
+            textWatcher
+        );
+
+        texteJoueur2.addTextChangedListener(
+            textWatcher
+        );
+
+        boutonCommencer.setOnClickListener(v -> {
+            String nom1 = preparerNom((Objects.requireNonNull(texteJoueur1.getText())).toString());
+            String nom2 = preparerNom((Objects.requireNonNull(texteJoueur2.getText())).toString());
 
             if (!TextUtils.isEmpty(nom1) && !TextUtils.isEmpty(nom2)) {
                 Intent intent = new Intent(getActivity(), DamierActivity.class);
@@ -62,7 +90,21 @@ public class MainMenuFragment extends Fragment {
             }
         });
 
+        update();
+
         return view;
+    }
+
+    private void update() {
+
+        String temp1 = preparerNom(texteJoueur1.getText().toString());
+        String temp2 = preparerNom(texteJoueur2.getText().toString());
+
+        boutonCommencer.setEnabled(
+            preparerNom(texteJoueur1.getText().toString()).length() > 0 &&
+            preparerNom(texteJoueur2.getText().toString()).length() > 0
+        );
+
     }
 
     private String preparerNom(String str) {
@@ -74,6 +116,10 @@ public class MainMenuFragment extends Fragment {
             if (str.charAt(i) != ' ' && str.charAt(i) != '\n') {
                 beginningWords = i;
                 break;
+            } else {
+                if (i == str.length() - 1) {
+                    return "";
+                }
             }
         }
         for (int i = str.length() - 1; i >= 0; i--) {

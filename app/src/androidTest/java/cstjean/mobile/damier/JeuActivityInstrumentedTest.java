@@ -4,6 +4,11 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
+import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
+import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.isNotClickable;
+import static androidx.test.espresso.matcher.ViewMatchers.isNotEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
@@ -52,13 +57,14 @@ public class JeuActivityInstrumentedTest {
 
         onView(withId(R.id.text_joueur1)).check(matches(withText("")));
         onView(withId(R.id.text_joueur2)).check(matches(withText("")));
+        onView(withId(R.id.btn_jouer)).check(matches(isNotEnabled()));
 
         onView(withId(R.id.text_joueur1)).perform(typeText(nom1));
         onView(withId(R.id.text_joueur2)).perform(typeText(nom2));
 
         onView(withId(R.id.text_joueur1)).check(matches(withText(nom1)));
         onView(withId(R.id.text_joueur2)).check(matches(withText(nom2)));
-
+        onView(withId(R.id.btn_jouer)).check(matches(isEnabled()));
     }
 
     @Test
@@ -69,12 +75,14 @@ public class JeuActivityInstrumentedTest {
 
         onView(withId(R.id.text_joueur1)).check(matches(withText("")));
         onView(withId(R.id.text_joueur2)).check(matches(withText("")));
+        onView(withId(R.id.btn_jouer)).check(matches(isNotEnabled()));
 
         onView(withId(R.id.text_joueur1)).perform(typeText(nom1));
         onView(withId(R.id.text_joueur2)).perform(typeText(nom2));
 
         onView(withId(R.id.text_joueur1)).check(matches(withText(nom1)));
         onView(withId(R.id.text_joueur2)).check(matches(withText(nom2)));
+        onView(withId(R.id.btn_jouer)).check(matches(isEnabled()));
 
         UiDevice device = UiDevice.getInstance(getInstrumentation());
         device.setOrientationLeft();
@@ -83,5 +91,6 @@ public class JeuActivityInstrumentedTest {
 
         onView(withId(R.id.text_joueur1)).check(matches(withText(nom1)));
         onView(withId(R.id.text_joueur2)).check(matches(withText(nom2)));
+        onView(withId(R.id.btn_jouer)).check(matches(isEnabled()));
     }
 }
